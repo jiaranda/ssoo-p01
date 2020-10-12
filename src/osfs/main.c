@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-  os_mount("data/simdiskfilled.bin");
+  os_mount("data/simdiskformat.bin");
+  os_bitmap(0, true);
   return 0;
 }
