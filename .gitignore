@@ -1,5 +1,7 @@
 # Prerequisites
 *.d
+/data
+/osfs
 
 # Object files
 *.o
