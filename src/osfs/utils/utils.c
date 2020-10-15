@@ -67,3 +67,22 @@ void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint fro
     index++;
   }
 }
+
+int check_block_in_bitmap(uint block_id)
+{
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    printf("No se pudo leer el archivo\n");
+    return 0;
+  }
+  uint block_offset = 1;
+  uint bitmap_block = (uint)((block_id) / ((1 << 11) * 8));
+  printf("Bloque: %d, Bloque de bitmap: %d\n", block_id, bitmap_block);
+
+  // unsigned char bytes[2047];
+  // fseek(fp, 2048 * block_offset, SEEK_SET);
+  // fread(bytes, 2048, 1, fp);
+  return 1;
+  fclose(fp);
+}
