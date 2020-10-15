@@ -30,7 +30,7 @@ osFile *os_open(char *path, char mode)
   unsigned char entry[32];
   int entry_type;
   uint32_t entry_pointer;
-  unsigned char entry_name[29];
+  char entry_name[29];
   // unsigned char new_file_name[29];
 
   // look for file

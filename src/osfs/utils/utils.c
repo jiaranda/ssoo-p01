@@ -53,7 +53,7 @@ uint print_block(unsigned num, bool hex)
     return busy_blocks;
 }
 
-void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint from, uint to)
+void get_array_slice(unsigned char *array, char *sliced_array, uint from, uint to)
 {
     uint index = 0;
     for (uint i = from; i < to; i++)
@@ -77,7 +77,7 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
     unsigned char entry[32];
     int entry_type;
     uint32_t entry_pointer;
-    unsigned char entry_name[29];
+    char entry_name[29];
     for (int i = 0; i < 32; i++)
     {
         fread(entry, 32, 1, fp);
