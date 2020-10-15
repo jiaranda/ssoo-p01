@@ -63,6 +63,14 @@ void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint fro
     }
 }
 
+void indent(int level)
+{
+    for (int j = 0; j < level; j++)
+    {
+        printf("---");
+    }
+}
+
 void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
 {
     fseek(fp, 2048 * block_pointer, SEEK_SET);
@@ -78,15 +86,12 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
         {
             entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
             get_array_slice(entry, entry_name, 3, 31);
+            indent(level);
             printf("%d\t%d\t%s\n", entry_type, entry_pointer, entry_name);
+            // if (entry_type == OS_DIRECTORY)
+            // {
+            //     print_directory_tree(fp, entry_pointer, level + 1);
+            // }
         }
-    }
-}
-
-void indent(int level)
-{
-    for (int j = 0; j < level; j++)
-    {
-        printf("-");
     }
 }
