@@ -13,16 +13,16 @@ typedef enum filetype
 
 typedef struct OSFile
 {
-  char name[255];
-  uint inode;
   Filetype filetype;
+  uint32_t inode; // disk address
+  char name[29];
   char path[255];
-  uint disk_address;
-  uint size; // bytes
+  uint32_t size; // bytes
 } osFile;
 
 uint count_bits_1(unsigned char byte);
 void print_byte_bin(unsigned char byte);
 uint print_block(unsigned num, bool hex);
 void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint from, uint to);
+uint32_t get_file_size(uint32_t inode);
 void print_directory_tree(FILE *fp, uint32_t block_pointer, int level);
