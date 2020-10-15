@@ -17,44 +17,59 @@ osFile *os_open(char *path, char mode)
     return 0;
   }
 
-  // get root dir block data
+  // parse path
+  char tmp_path[29];
+  strcpy(tmp_path, path);
+  char *next_dir;
+  next_dir = strtok(tmp_path, "/");
+  printf("Currently looking for: %s\n", next_dir);
+
+  // initialize new_file
+  osFile *new_file = calloc(1, sizeof(osFile));
+
+  // osFile attributes
+  unsigned char entry[32];
+  int entry_type;
+  uint32_t entry_pointer;
+  unsigned char entry_name[29];
+
+  // look for file
   for (int i = 0; i < 32; i++)
   {
-    unsigned char entry[32];
     fread(entry, 32, 1, fp);
-    int entry_type = entry[0] >> 6;
+    entry_type = entry[0] >> 6;
     if (entry_type)
     {
-      unsigned char entry_name[29];
       get_array_slice(entry, entry_name, 3, 31);
-      uint32_t entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
-      printf("%d\t%s\n", entry_pointer, entry_name);
     }
-    else
+
+    if (entry_type == OS_DIRECTORY && !strcmp(entry_name, next_dir))
     {
-      printf("Invalid entry\n");
+      printf("%s = %s\n", entry_name, next_dir);
+      next_dir = strtok(NULL, "/");
+      i = 0;
+      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+      fseek(fp, 2048 * entry_pointer, SEEK_SET);
+    }
+
+    if (entry_type == OS_FILE && !strcmp(entry_name, next_dir))
+    {
+      printf("%s = %s\n", entry_name, next_dir);
+      new_file->filetype = entry_type;
+      new_file->inode = entry_pointer;
+      strcpy(new_file->name, entry_name);
+      // strcpy(new_file->path, path);
     }
   }
 
-  // fseek(fp, 2048 * block_num, SEEK_SET);
-  // unsigned char block[2047];
-  // fread(block, 2048, 1, fp);
-  // int entry_type = block[0] >> 6;
-  // printf("%d\n", entry_type);
-
-  // parse path
-  // char *arg;
-  // arg = strtok(path, "/");
-  // while (arg != NULL)
+  // if (!strcmp(mode, "w"))
   // {
-  //   arg = strtok(NULL, "/");
+
   // }
 
   // close file
   fclose(fp);
 
-  // initialize new_file
-  osFile *new_file = calloc(1, sizeof(osFile));
   return new_file;
 }
 
