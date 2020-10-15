@@ -63,7 +63,7 @@ void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint fro
     }
 }
 
-void print_directory(FILE *fp, uint32_t block_pointer, int level)
+void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
 {
     fseek(fp, 2048 * block_pointer, SEEK_SET);
     unsigned char entry[32];
@@ -80,5 +80,13 @@ void print_directory(FILE *fp, uint32_t block_pointer, int level)
             get_array_slice(entry, entry_name, 3, 31);
             printf("%d\t%d\t%s\n", entry_type, entry_pointer, entry_name);
         }
+    }
+}
+
+void indent(int level)
+{
+    for (int j = 0; j < level; j++)
+    {
+        printf("-");
     }
 }
