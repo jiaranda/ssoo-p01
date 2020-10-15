@@ -22,7 +22,6 @@ osFile *os_open(char *path, char mode)
   strcpy(tmp_path, path);
   char *next_dir;
   next_dir = strtok(tmp_path, "/");
-  printf("Currently looking for: %s\n", next_dir);
 
   // initialize new_file
   osFile *new_file = calloc(1, sizeof(osFile));
@@ -46,7 +45,6 @@ osFile *os_open(char *path, char mode)
 
     if (entry_type == OS_DIRECTORY && !strcmp(entry_name, next_dir))
     {
-      printf("%s = %s\n", entry_name, next_dir);
       next_dir = strtok(NULL, "/");
       i = 0;
       entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
@@ -55,7 +53,6 @@ osFile *os_open(char *path, char mode)
 
     if (entry_type == OS_FILE && !strcmp(entry_name, next_dir))
     {
-      printf("%s = %s\n", entry_name, next_dir);
       new_file->filetype = entry_type;
       new_file->inode = entry_pointer;
       strcpy(new_file->name, entry_name);
