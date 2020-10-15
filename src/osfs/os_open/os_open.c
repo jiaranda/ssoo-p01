@@ -32,6 +32,7 @@ osFile *os_open(char *path, char mode)
   int entry_type;
   uint32_t entry_pointer;
   unsigned char entry_name[29];
+  // unsigned char new_file_name[29];
 
   // look for file
   for (int i = 0; i < 32; i++)
@@ -64,7 +65,9 @@ osFile *os_open(char *path, char mode)
 
   // if (!strcmp(mode, "w"))
   // {
-
+  //   new_file->filetype = entry_type;
+  //   new_file->inode = entry_pointer;
+  //   new_file->name =
   // }
 
   // close file
