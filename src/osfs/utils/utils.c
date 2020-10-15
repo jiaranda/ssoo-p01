@@ -1,6 +1,8 @@
+#include <stdint.h>
 #include "utils.h"
 
 extern char *disk_path;
+extern uint32_t BLOCK_NUM_MASK;
 
 uint count_bits_1(unsigned char byte)
 {
@@ -49,4 +51,34 @@ uint print_block(unsigned num, bool hex)
     }
     fclose(fp);
     return busy_blocks;
+}
+
+void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint from, uint to)
+{
+    uint index = 0;
+    for (uint i = from; i < to; i++)
+    {
+        sliced_array[index] = array[i];
+        index++;
+    }
+}
+
+void print_directory(FILE *fp, uint32_t block_pointer, int level)
+{
+    fseek(fp, 2048 * block_pointer, SEEK_SET);
+    unsigned char entry[32];
+    int entry_type;
+    uint32_t entry_pointer;
+    unsigned char entry_name[29];
+    for (int i = 0; i < 32; i++)
+    {
+        fread(entry, 32, 1, fp);
+        entry_type = entry[0] >> 6;
+        if (entry_type)
+        {
+            entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+            get_array_slice(entry, entry_name, 3, 31);
+            printf("%d\t%d\t%s\n", entry_type, entry_pointer, entry_name);
+        }
+    }
 }
