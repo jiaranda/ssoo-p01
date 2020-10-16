@@ -13,7 +13,7 @@ int os_exists(char *path)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    printf("No se pudo leer el archivo\n");
+    fprintf(stderr, "ERROR: No se pudo leer el disco.\n");
     return 0;
   }
 
@@ -52,6 +52,11 @@ int os_exists(char *path)
 
     if (entry_type == 1 && !strcmp(entry_name, next_dir))
     {
+      if(strtok(NULL, "/"))
+      {
+        fprintf(stderr, "ERROR: Path no cumple el formato.\n");
+        return 0;
+      }
       return 1;
     }
   }
