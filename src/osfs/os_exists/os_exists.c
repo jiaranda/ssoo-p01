@@ -5,10 +5,9 @@
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
 
-
 int os_exists(char *path)
 {
- 
+
   // load disk pointer
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
@@ -22,7 +21,8 @@ int os_exists(char *path)
   strcpy(tmp_path, path);
   char *next_dir;
   next_dir = strtok(tmp_path, "/");
-  if (!next_dir){
+  if (!next_dir)
+  {
     next_dir = strtok(NULL, "/");
   }
 
@@ -42,11 +42,12 @@ int os_exists(char *path)
       get_array_slice(entry, entry_name, 3, 31);
     }
 
+    entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+
     if (entry_type == 2 && !strcmp(entry_name, next_dir))
     {
       next_dir = strtok(NULL, "/");
       i = 0;
-      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
       fseek(fp, 2048 * entry_pointer, SEEK_SET);
     }
 
@@ -55,6 +56,10 @@ int os_exists(char *path)
       if(strtok(NULL, "/"))
       {
         fprintf(stderr, "ERROR: Path no cumple el formato.\n");
+        return 0;
+      }
+      if (!check_block_in_bitmap(entry_pointer))
+      {
         return 0;
       }
       return 1;
