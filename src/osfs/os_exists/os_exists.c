@@ -53,6 +53,7 @@ int os_exists(char *path)
 
     if (entry_type == 1 && !strcmp(entry_name, next_dir))
     {
+      fclose(fp);
       if (!check_block_in_bitmap(entry_pointer))
       {
         return 0;
