@@ -93,8 +93,9 @@ u_int32_t check_block_in_bitmap(u_int32_t block_id)
   // printf("asd: %d\n", (u_int32_t)byte[0]);
   u_int32_t is_used = (u_int32_t)(byte[0] >> (7 - bit_inside_byte) & 1);
   // printf("is used: %d\n", is_used);
-  return is_used;
   fclose(fp);
+  return is_used;
+  
 }
 
 void indent(int level)

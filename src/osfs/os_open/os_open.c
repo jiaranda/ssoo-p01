@@ -15,6 +15,7 @@ osFile *os_open(char *path, char mode)
   if (!fp)
   {
     printf("No se pudo acceder al archivo de disco\n");
+    fclose(fp);
     return 0;
   }
 
