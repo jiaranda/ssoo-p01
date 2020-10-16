@@ -16,8 +16,6 @@ typedef struct OSFile
   Filetype filetype;
   uint32_t inode; // disk address
   char name[29];
-  char path[255];
-  uint32_t size; // bytes
 } osFile;
 
 uint count_bits_1(unsigned char byte);

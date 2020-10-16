@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "os_open.h"
+// #include "../os_exists/os_exists.h"
 
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
@@ -13,7 +14,7 @@ osFile *os_open(char *path, char mode)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    printf("No se pudo leer el archivo\n");
+    printf("No se pudo acceder al archivo de disco\n");
     return 0;
   }
 
@@ -22,6 +23,10 @@ osFile *os_open(char *path, char mode)
   strcpy(tmp_path, path);
   char *next_dir;
   next_dir = strtok(tmp_path, "/");
+  if (!next_dir)
+  {
+    next_dir = strtok(tmp_path, "/");
+  }
 
   // initialize new_file
   osFile *new_file = calloc(1, sizeof(osFile));
@@ -31,10 +36,9 @@ osFile *os_open(char *path, char mode)
   int entry_type;
   uint32_t entry_pointer;
   char entry_name[29];
-  // unsigned char new_file_name[29];
 
   // look for file
-  for (int i = 0; i < 32; i++)
+  for (int i = 0; i < 64; i++)
   {
     fread(entry, 32, 1, fp);
     entry_type = entry[0] >> 6;
