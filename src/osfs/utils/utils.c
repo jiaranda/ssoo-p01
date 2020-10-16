@@ -1,6 +1,8 @@
+#include <stdint.h>
 #include "utils.h"
 
 extern char *disk_path;
+extern uint32_t BLOCK_NUM_MASK;
 
 uint count_bits_1(unsigned char byte)
 {
@@ -93,4 +95,37 @@ u_int32_t check_block_in_bitmap(u_int32_t block_id)
   // printf("is used: %d\n", is_used);
   return is_used;
   fclose(fp);
+}
+
+void indent(int level)
+{
+  for (int j = 0; j < level; j++)
+  {
+    printf("-");
+  }
+}
+
+void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
+{
+  fseek(fp, 2048 * block_pointer, SEEK_SET);
+  unsigned char entry[32];
+  int entry_type;
+  uint32_t entry_pointer;
+  char entry_name[29];
+  for (int i = 0; i < 32; i++)
+  {
+    fread(entry, 32, 1, fp);
+    entry_type = entry[0] >> 6;
+    if (entry_type)
+    {
+      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+      get_array_slice(entry, entry_name, 3, 31);
+      indent(level);
+      printf("%d\t%d\t%s\n", entry_type, entry_pointer, entry_name);
+      // if (entry_type == OS_DIRECTORY)
+      // {
+      //     print_directory_tree(fp, entry_pointer, level + 1);
+      // }
+    }
+  }
 }
