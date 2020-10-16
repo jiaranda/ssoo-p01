@@ -58,7 +58,7 @@ uint print_block(unsigned num, bool hex)
 //     arg = strtok(NULL, "/");
 // }
 
-void get_array_slice(unsigned char *array, unsigned char *sliced_array, uint from, uint to)
+void get_array_slice(unsigned char *array, char *sliced_array, uint from, uint to)
 {
   uint index = 0;
   for (uint i = from; i < to; i++)
