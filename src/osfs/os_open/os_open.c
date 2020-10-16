@@ -3,10 +3,32 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "os_open.h"
-// #include "../os_exists/os_exists.h"
+#include "../os_exists/os_exists.h"
 
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
+
+uint32_t get_empty_block_pointer(FILE *fp)
+{
+  fseek(fp, 2048, SEEK_SET);
+  uint32_t byte_count = 0;
+  unsigned char byte[1];
+  fread(byte, 1, 1, fp);
+  while ((uint32_t)byte[0] != 255)
+  {
+    fread(byte, 1, 1, fp);
+    byte_count++;
+  }
+
+  for (uint32_t i = 0; i < 8; i++)
+  {
+    if (byte[0] & (128 >> i))
+    {
+      return (byte_count * 8) + i;
+    }
+  }
+  return 0;
+}
 
 osFile *os_open(char *path, char mode)
 {
@@ -64,12 +86,20 @@ osFile *os_open(char *path, char mode)
     }
   }
 
-  // if (!strcmp(mode, "w"))
-  // {
-  //   new_file->filetype = entry_type;
-  //   new_file->inode = entry_pointer;
-  //   new_file->name =
-  // }
+  char mode_tmp[1];
+  strcpy(mode_tmp, &mode);
+  if (!strcmp(mode_tmp, "w") && !os_exists(path))
+  {
+    // get first empty block from bitmap
+    printf("EMPTY BLOCK: %u\n", get_empty_block_pointer(fp));
+
+    // write new entry
+
+    // return
+    new_file->filetype = OS_FILE;
+    new_file->inode = entry_pointer;
+    strcpy(new_file->name, next_dir);
+  }
 
   // close file
   fclose(fp);
