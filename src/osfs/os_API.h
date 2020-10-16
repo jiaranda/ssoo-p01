@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "os_bitmap/os_bitmap.h"
 #include "os_mount/os_mount.h"
+#include "os_exists/os_exists.h"
 
 typedef struct osFile_t
 {
