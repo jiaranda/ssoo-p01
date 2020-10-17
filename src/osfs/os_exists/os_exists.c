@@ -47,7 +47,7 @@ int os_exists(char *path)
     if (entry_type == 2 && !strcmp(entry_name, next_dir))
     {
       next_dir = strtok(NULL, "/");
-      i = 0;
+      i = -1;
       fseek(fp, 2048 * entry_pointer, SEEK_SET);
     }
 
