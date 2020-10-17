@@ -2,10 +2,10 @@
 
 int main(int argc, char *argv[])
 {
-  os_mount("data/simdiskformat.bin");
+  os_mount("data/simdiskfilled.bin");
   // os_bitmap(0, true);
-  osFile *file = os_open("memes/mimeme.pene", 'w');
-  printf("%d\t%d\t%s\n", file->filetype, file->inode, file->name);
+  osFile *file = os_open("/IMPORTANTS.txt", 'w');
+  printf("%d\t%s\n", file->filetype, file->name);
   os_close(file);
   // int res = os_exists("/memes/generic (3).png");
   // int res = os_exists("/IMPORTANT.txt");
