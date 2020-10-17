@@ -5,10 +5,10 @@
 #include "os_mount/os_mount.h"
 #include "os_open/os_open.h"
 #include "os_exists/os_exists.h"
+#include "os_ls/os_ls.h"
 
 // General Functions
 int os_exists(char *path);
-void os_ls(char *path);
 
 // File Management Functions
 int os_read(osFile *file_desc, void *buffer, int nbytes);
