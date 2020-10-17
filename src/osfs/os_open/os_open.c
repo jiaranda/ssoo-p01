@@ -8,30 +8,26 @@
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
 
-uint32_t get_empty_block_pointer(FILE *fp)
-{
-  fseek(fp, 2048, SEEK_SET);
-  uint32_t byte_count = 0;
-  unsigned char byte[1];
-  fread(byte, 1, 1, fp);
-  while ((uint32_t)byte[0] != 255)
-  {
-    fread(byte, 1, 1, fp);
-    byte_count++;
-  }
-
-  for (uint32_t i = 0; i < 8; i++)
-  {
-    if (byte[0] & (128 >> i))
-    {
-      return (byte_count * 8) + i;
-    }
-  }
-  return 0;
-}
-
 osFile *os_open(char *path, char mode)
 {
+  // initialize new_file
+  osFile *new_file = calloc(1, sizeof(osFile));
+
+  // without a valid path, returns invalid
+  if (!dir_exists(path))
+  {
+    fprintf(stderr, "ERROR: path does not exist.\n");
+    new_file->filetype = INVALID;
+    return new_file;
+  }
+
+  // if file exists in w mode or doesn't in r mode, returns invalid
+  if ((mode == 'w' && os_exists(path)) || (mode == 'r' && !os_exists(path)))
+  {
+    new_file->filetype = INVALID;
+    return new_file;
+  }
+
   // load disk pointer
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
@@ -40,7 +36,7 @@ osFile *os_open(char *path, char mode)
     return 0;
   }
 
-  // parse path
+  // path parsing
   char tmp_path[29];
   strcpy(tmp_path, path);
   char *next_dir;
@@ -50,14 +46,12 @@ osFile *os_open(char *path, char mode)
     next_dir = strtok(tmp_path, "/");
   }
 
-  // initialize new_file
-  osFile *new_file = calloc(1, sizeof(osFile));
-
-  // osFile attributes
+  // entry attributes
   unsigned char entry[32];
   int entry_type;
   uint32_t entry_pointer;
   char entry_name[29];
+  char file_name[29];
 
   // look for file
   for (int i = 0; i < 64; i++)
@@ -82,22 +76,39 @@ osFile *os_open(char *path, char mode)
       new_file->filetype = entry_type;
       new_file->inode = entry_pointer;
       strcpy(new_file->name, entry_name);
-      // strcpy(new_file->path, path);
+    }
+
+    if (i == 63)
+    {
+      strcpy(file_name, next_dir);
     }
   }
 
-  char mode_tmp[1];
-  strcpy(mode_tmp, &mode);
-  if (!strcmp(mode_tmp, "w") && !os_exists(path))
+  printf("El nombre del archivo es: %s\n", file_name);
+
+  // mode = 'w'
+  if (mode == 'w' && !os_exists(path))
   {
     // get first empty block from bitmap
-    printf("EMPTY BLOCK: %u\n", get_empty_block_pointer(fp));
+    uint32_t empty_block = get_empty_block_pointer(fp);
+
+    // disk is completely full
+    if (!empty_block)
+    {
+      new_file->filetype = INVALID;
+      return new_file;
+    }
 
     // write new entry
+    char new_entry[32];
+    int new_entry_type = 1 << 22;
+    new_entry[0] = new_entry_type | empty_block;
+    printf("entry[0]: %d\n", entry[0]);
+    strcpy(&new_entry[3], file_name);
 
-    // return
+    // create
     new_file->filetype = OS_FILE;
-    new_file->inode = entry_pointer;
+    new_file->inode = empty_block;
     strcpy(new_file->name, next_dir);
   }
 
