@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "utils.h"
 
 extern char *disk_path;
@@ -52,13 +53,6 @@ uint print_block(unsigned num, bool hex)
   fclose(fp);
   return busy_blocks;
 }
-
-// arg = strtok(path, "/");
-// while (arg != NULL)
-// {
-
-//     arg = strtok(NULL, "/");
-// }
 
 void get_array_slice(unsigned char *array, char *sliced_array, uint from, uint to)
 {
@@ -128,4 +122,102 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
       // }
     }
   }
+}
+
+uint32_t get_empty_block_pointer(FILE *fp)
+{
+  fseek(fp, 2048, SEEK_SET);
+  uint32_t byte_count = 0;
+  unsigned char byte[0];
+  fread(byte, 1, 1, fp);
+  while ((uint32_t)byte[0] == 255)
+  {
+    fread(byte, 1, 1, fp);
+    byte_count++;
+  }
+
+  for (uint32_t i = 0; i < 8; i++)
+  {
+    if (byte[0] & (128 >> i))
+    {
+      return (byte_count * 8) + i;
+    }
+  }
+  return 0;
+}
+
+void get_no_name_path(char *path, char *no_name_path)
+{
+  strcpy(no_name_path, path);
+  for (int i = strlen(path) - 1; i >= 0; i--)
+  {
+    if (!strcmp("/", &no_name_path[i]))
+    {
+      no_name_path[i] = 0;
+      return;
+    }
+    no_name_path[i] = 0;
+  }
+  return;
+}
+
+int dir_exists(char *path)
+{
+  // open file
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    printf("No se pudo acceder al archivo de disco\n");
+    return 0;
+  }
+
+  // path parsing
+  char no_name_path[29];
+  get_no_name_path(path, no_name_path);
+
+  // root path exception
+  if (!strcmp(no_name_path, ""))
+  {
+    fclose(fp);
+    return 1;
+  }
+
+  char *next_dir;
+  next_dir = strtok(no_name_path, "/");
+  if (!next_dir)
+  {
+    next_dir = strtok(no_name_path, "/");
+  }
+
+  // entry
+  unsigned char entry[32];
+  int entry_type;
+  uint32_t entry_pointer;
+  char entry_name[29];
+
+  // look for directory
+  for (int i = 0; i < 64; i++)
+  {
+    fread(entry, 32, 1, fp);
+    entry_type = entry[0] >> 6;
+    if (entry_type)
+    {
+      get_array_slice(entry, entry_name, 3, 31);
+
+      if (next_dir && !strcmp(entry_name, next_dir))
+      {
+        next_dir = strtok(NULL, "/");
+        if (!next_dir)
+        {
+          fclose(fp);
+          return 1;
+        }
+        i = 0;
+        entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+        fseek(fp, 2048 * entry_pointer, SEEK_SET);
+      }
+    }
+  }
+  fclose(fp);
+  return 0;
 }
