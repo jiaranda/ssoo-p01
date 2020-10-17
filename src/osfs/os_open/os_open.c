@@ -16,7 +16,7 @@ osFile *os_open(char *path, char mode)
   // without a valid path, returns invalid
   if (!dir_exists(path))
   {
-    fprintf(stderr, "ERROR: path does not exist.\n");
+    fprintf(stderr, "ERROR: os_open. Path does not exist.\n");
     new_file->filetype = INVALID;
     return new_file;
   }
@@ -24,6 +24,7 @@ osFile *os_open(char *path, char mode)
   // if file exists in w mode or doesn't in r mode, returns invalid
   if ((mode == 'w' && os_exists(path)) || (mode == 'r' && !os_exists(path)))
   {
+    fprintf(stderr, "ERROR: os_open. Invalid operation.\n");
     new_file->filetype = INVALID;
     return new_file;
   }
@@ -32,7 +33,7 @@ osFile *os_open(char *path, char mode)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    printf("No se pudo acceder al archivo de disco\n");
+    fprintf(stderr, "ERROR: os_open. Error while reading disk.\n");
     return 0;
   }
 
@@ -73,6 +74,7 @@ osFile *os_open(char *path, char mode)
 
     if (entry_type == OS_FILE && !strcmp(entry_name, next_dir))
     {
+      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
       new_file->filetype = entry_type;
       new_file->inode = entry_pointer;
       strcpy(new_file->name, entry_name);
@@ -84,32 +86,31 @@ osFile *os_open(char *path, char mode)
     }
   }
 
-  printf("El nombre del archivo es: %s\n", file_name);
-
-  // mode = 'w'
-  if (mode == 'w' && !os_exists(path))
+  // handle write mode
+  if (mode == 'w')
   {
     // get first empty block from bitmap
     uint32_t empty_block = get_empty_block_pointer(fp);
 
-    // disk is completely full
+    // handle a completely filled disk
     if (!empty_block)
     {
+      fprintf(stderr, "ERROR: os_open. Disk is completely full.\n");
       new_file->filetype = INVALID;
       return new_file;
     }
 
     // write new entry
-    char new_entry[32];
-    int new_entry_type = 1 << 22;
-    new_entry[0] = new_entry_type | empty_block;
-    printf("entry[0]: %d\n", entry[0]);
-    strcpy(&new_entry[3], file_name);
+    // unsigned char new_entry_head[3];
+    // new_entry_head = 1 << 22 | empty_block;
+    // fwrite();
+    // printf("entry[0]: %d\n", entry[0]);
+    // strcpy(&new_entry[3], file_name);
 
-    // create
+    // initialize new osFile
     new_file->filetype = OS_FILE;
     new_file->inode = empty_block;
-    strcpy(new_file->name, next_dir);
+    strcpy(new_file->name, file_name);
   }
 
   // close file
