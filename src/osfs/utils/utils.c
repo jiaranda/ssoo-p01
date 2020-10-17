@@ -53,13 +53,6 @@ uint print_block(unsigned num, bool hex)
   return busy_blocks;
 }
 
-// arg = strtok(path, "/");
-// while (arg != NULL)
-// {
-
-//     arg = strtok(NULL, "/");
-// }
-
 void get_array_slice(unsigned char *array, char *sliced_array, uint from, uint to)
 {
   uint index = 0;
@@ -128,4 +121,38 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
       // }
     }
   }
+}
+
+uint32_t get_empty_block_pointer(char* filename, bool use_block)
+{
+  FILE* fp = fopen(filename, "rb");
+  fseek(fp, 2048, SEEK_SET);
+  uint32_t byte_count = 0;
+  unsigned char byte[0];
+  fread(byte, 1, 1, fp);
+  while ((uint32_t)byte[0] == 255)
+  {
+    fread(byte, 1, 1, fp);
+    byte_count++;
+  }
+
+  for (uint32_t i = 0; i < 8; i++)
+  {
+    if (byte[0] & (128 >> i))
+    {
+      if (use_block)
+      {
+        printf("%d\n", byte_count);
+        FILE* fp_write = fopen(filename, "wb");
+        fseek(fp_write, 2048 + byte_count, SEEK_SET);
+        byte[0] = byte[0] | (1 << (7-i));
+        fwrite(byte[0], 1, 1, fp_write);
+        fclose(fp_write);
+      }
+      fclose(fp);
+      return (byte_count * 8) + i;
+    }
+  }
+  fclose(fp);
+  return 0;
 }
