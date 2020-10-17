@@ -87,8 +87,8 @@ u_int32_t check_block_in_bitmap(u_int32_t block_id)
   // printf("asd: %d\n", (u_int32_t)byte[0]);
   u_int32_t is_used = (u_int32_t)(byte[0] >> (7 - bit_inside_byte) & 1);
   // printf("is used: %d\n", is_used);
-  return is_used;
   fclose(fp);
+  return is_used;
 }
 
 void indent(int level)
@@ -124,8 +124,39 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
   }
 }
 
-uint32_t get_empty_block_pointer(FILE *fp)
+// uint32_t get_empty_block_pointer()
+// {
+//   FILE *fp = fopen(disk_path, "rb");
+//   if (!fp)
+//   {
+//     fprintf(stderr, "ERROR: os_open. Error while reading disk.\n");
+//     return 0;
+//   }
+//   fseek(fp, 2048, SEEK_SET);
+//   uint32_t byte_count = 0;
+//   unsigned char byte[0];
+//   fread(byte, 1, 1, fp);
+//   while ((uint32_t)byte[0] == 255)
+//   {
+//     fread(byte, 1, 1, fp);
+//     byte_count++;
+//   }
+
+//   for (uint32_t i = 0; i < 8; i++)
+//   {
+//     if (byte[0] & (128 >> i))
+//     {
+//       fclose(fp);
+//       return (byte_count * 8) + i;
+//     }
+//   }
+//   fclose(fp);
+//   return 0;
+// }
+
+uint32_t get_empty_block_pointer(bool use_block)
 {
+  FILE *fp = fopen(disk_path, "rb");
   fseek(fp, 2048, SEEK_SET);
   uint32_t byte_count = 0;
   unsigned char byte[0];
@@ -135,11 +166,23 @@ uint32_t get_empty_block_pointer(FILE *fp)
     fread(byte, 1, 1, fp);
     byte_count++;
   }
+  fclose(fp);
 
   for (uint32_t i = 0; i < 8; i++)
   {
-    if (byte[0] & (128 >> i))
+    if (!(byte[0] & (128 >> i)))
     {
+      if (use_block)
+      {
+        printf("%d\n", byte_count);
+        FILE *fp_write = fopen(disk_path, "rb+");
+        fseek(fp_write, 2048 + byte_count, SEEK_SET);
+        printf("byte antes %d\n", byte[0]);
+        byte[0] = byte[0] | (1 << (7 - i));
+        printf("byte dps %d\n", byte[0]);
+        fwrite(byte, 1, 1, fp_write);
+        fclose(fp_write);
+      }
       return (byte_count * 8) + i;
     }
   }
@@ -212,7 +255,7 @@ int dir_exists(char *path)
           fclose(fp);
           return 1;
         }
-        i = 0;
+        i = -1;
         entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
         fseek(fp, 2048 * entry_pointer, SEEK_SET);
       }

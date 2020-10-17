@@ -29,14 +29,6 @@ osFile *os_open(char *path, char mode)
     return new_file;
   }
 
-  // load disk pointer
-  FILE *fp = fopen(disk_path, "rb");
-  if (!fp)
-  {
-    fprintf(stderr, "ERROR: os_open. Error while reading disk.\n");
-    return 0;
-  }
-
   // path parsing
   char tmp_path[29];
   strcpy(tmp_path, path);
@@ -48,11 +40,20 @@ osFile *os_open(char *path, char mode)
   }
 
   // entry attributes
+  uint32_t entry_address;
   unsigned char entry[32];
   int entry_type;
   uint32_t entry_pointer;
   char entry_name[29];
-  char file_name[29];
+  char file_name[29] = {0};
+
+  // load disk pointer
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    fprintf(stderr, "ERROR: os_open. Error while reading disk.\n");
+    return 0;
+  }
 
   // look for file
   for (int i = 0; i < 64; i++)
@@ -62,19 +63,18 @@ osFile *os_open(char *path, char mode)
     if (entry_type)
     {
       get_array_slice(entry, entry_name, 3, 31);
+      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
     }
 
     if (entry_type == OS_DIRECTORY && !strcmp(entry_name, next_dir))
     {
       next_dir = strtok(NULL, "/");
-      i = 0;
-      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
+      i = -1;
       fseek(fp, 2048 * entry_pointer, SEEK_SET);
     }
 
     if (entry_type == OS_FILE && !strcmp(entry_name, next_dir))
     {
-      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
       new_file->filetype = entry_type;
       new_file->inode = entry_pointer;
       strcpy(new_file->name, entry_name);
@@ -83,14 +83,34 @@ osFile *os_open(char *path, char mode)
     if (i == 63)
     {
       strcpy(file_name, next_dir);
+      fseek(fp, 2048 * entry_pointer, SEEK_SET);
+      for (int k = 0; k < 64; k++)
+      {
+        fread(entry, 32, 1, fp);
+        entry_type = entry[0] >> 6;
+        if (!entry_type)
+        {
+          entry_address = 2048 * entry_pointer + 32 * k;
+          break;
+        }
+      }
     }
   }
+  fclose(fp);
 
   // handle write mode
   if (mode == 'w')
   {
-    // get first empty block from bitmap
-    uint32_t empty_block = get_empty_block_pointer(fp);
+    // handle full address block
+    if (!entry_address)
+    {
+      fprintf(stderr, "ERROR: os_open. The address block is full.\n");
+      new_file->filetype = INVALID;
+      return new_file;
+    }
+
+    // get first empty block from bitmap and use it
+    uint32_t empty_block = get_empty_block_pointer(1);
 
     // handle a completely filled disk
     if (!empty_block)
@@ -101,21 +121,30 @@ osFile *os_open(char *path, char mode)
     }
 
     // write new entry
-    // unsigned char new_entry_head[3];
-    // new_entry_head = 1 << 22 | empty_block;
-    // fwrite();
-    // printf("entry[0]: %d\n", entry[0]);
-    // strcpy(&new_entry[3], file_name);
+    unsigned char new_entry_head[3];
+    uint32_t tmp_head;
+    tmp_head = OS_FILE << 22 | empty_block;    // 4194368 -> 01000000 000000 01000000
+    new_entry_head[0] = tmp_head >> 16;        // esto funciona, es 64
+    new_entry_head[1] = (tmp_head >> 8) & 255; // WIP
+    new_entry_head[2] = tmp_head & 255;
+
+    FILE *fpw = fopen(disk_path, "wb+");
+    if (!fpw)
+    {
+      fprintf(stderr, "ERROR: os_open. Couldn't write on file.\n");
+      new_file->filetype = INVALID;
+      return new_file;
+    }
+    fseek(fpw, entry_address, SEEK_SET);
+    fwrite(new_entry_head, 3, 1, fpw);
+    fwrite(file_name, 29, 1, fpw);
+    fclose(fpw);
 
     // initialize new osFile
     new_file->filetype = OS_FILE;
     new_file->inode = empty_block;
     strcpy(new_file->name, file_name);
   }
-
-  // close file
-  fclose(fp);
-
   return new_file;
 }
 
