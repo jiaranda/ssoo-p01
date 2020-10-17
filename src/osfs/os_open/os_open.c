@@ -128,7 +128,7 @@ osFile *os_open(char *path, char mode)
     new_entry_head[1] = (tmp_head >> 8) & 255; // WIP
     new_entry_head[2] = tmp_head & 255;
 
-    FILE *fpw = fopen(disk_path, "wb+");
+    FILE *fpw = fopen(disk_path, "rb+");
     if (!fpw)
     {
       fprintf(stderr, "ERROR: os_open. Couldn't write on file.\n");
