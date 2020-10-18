@@ -150,6 +150,10 @@ void print_directory_tree(FILE *fp, uint32_t block_pointer, int level)
 uint32_t get_empty_block_pointer(bool use_block)
 {
   FILE *fp = fopen(disk_path, "rb");
+  if(!fp)
+  {
+    fprintf(stderr, "[ERROR] get_empty_block_pointer: could not open disk for reading\n");
+  }
   fseek(fp, 2048, SEEK_SET);
   uint32_t byte_count = 0;
   unsigned char byte[0];
@@ -168,6 +172,10 @@ uint32_t get_empty_block_pointer(bool use_block)
       if (use_block)
       {
         FILE *fp_write = fopen(disk_path, "rb+");
+        if(!fp_write)
+        {
+          fprintf(stderr, "[ERROR] get_empty_block_pointer: could not open disk for writing\n");
+        }
         fseek(fp_write, 2048 + byte_count, SEEK_SET);
         printf("byte_count + 2048: %d", 2048 + byte_count);
         byte[0] = byte[0] | (1 << (7 - i));
