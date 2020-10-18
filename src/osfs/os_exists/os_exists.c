@@ -12,7 +12,7 @@ int os_exists(char *path)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    fprintf(stderr, "ERROR: No se pudo leer el disco.\n");
+    fprintf(stderr, "[ERROR] os_exists: Error while reading disk.\n");
     return 0;
   }
 
@@ -55,7 +55,7 @@ int os_exists(char *path)
       fclose(fp);
       if (strtok(NULL, "/"))
       {
-        fprintf(stderr, "ERROR: Path no cumple el formato.\n");
+        fprintf(stderr, "[ERROR] os_exists: Invalid path.\n");
         return 0;
       }
       if (!check_block_in_bitmap(entry_pointer))
