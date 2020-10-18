@@ -3,12 +3,16 @@
 int main(int argc, char *argv[])
 {
   os_mount("data/simdiskfilled.bin");
-  // os_bitmap(0, true);
-  osFile *file = os_open("memes/generic (3).png", 'r');
-  printf("%d\t%d\t%s\n", file->filetype, file->inode, file->name);
+
+  osFile *file = os_open("/memes/generic (123).png", 'w');
+  if (file->filetype)
+  {
+    printf("Opened file\t%s\n", file->name);
+    printf("File type\t%d\n", file->filetype);
+    printf("Inode\t\t%d\n", file->inode);
+  }
   os_close(file);
-  // int res = os_exists("/memes/generic (3).png");
-  int res = os_exists("/IMPORTANT.txt");
-  printf("Resultado os_exists: %d\n", res);
+
+  os_ls("/memes");
   return 0;
 }

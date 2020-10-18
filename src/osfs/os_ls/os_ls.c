@@ -4,7 +4,7 @@
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
 
-void os_ls(char* path)
+void os_ls(char *path)
 {
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
@@ -18,7 +18,8 @@ void os_ls(char* path)
   strcpy(tmp_path, path);
   char *next_dir;
   next_dir = strtok(tmp_path, "/");
-  if (!next_dir){
+  if (!next_dir)
+  {
     next_dir = strtok(NULL, "/");
   }
 
@@ -30,7 +31,7 @@ void os_ls(char* path)
 
   // look for file
   for (int i = 0; i < 64; i++)
-  { 
+  {
     fread(entry, 32, 1, fp);
     entry_type = entry[0] >> 6;
     if (next_dir)
@@ -60,7 +61,11 @@ void os_ls(char* path)
         get_array_slice(entry, entry_name, 3, 31);
         fprintf(stderr, "%s\n", entry_name);
       }
-      if (i == 63) return;
+      if (i == 63)
+      {
+        fclose(fp);
+        return;
+      }
     }
   }
   fprintf(stderr, "ERROR: path no encontrado.\n");

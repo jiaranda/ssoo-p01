@@ -41,19 +41,19 @@ int os_exists(char *path)
     {
       get_array_slice(entry, entry_name, 3, 31);
     }
-
     entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
 
     if (entry_type == 2 && !strcmp(entry_name, next_dir))
     {
       next_dir = strtok(NULL, "/");
-      i = 0;
+      i = -1;
       fseek(fp, 2048 * entry_pointer, SEEK_SET);
     }
 
     if (entry_type == 1 && !strcmp(entry_name, next_dir))
     {
-      if(strtok(NULL, "/"))
+      fclose(fp);
+      if (strtok(NULL, "/"))
       {
         fprintf(stderr, "ERROR: Path no cumple el formato.\n");
         return 0;
