@@ -41,7 +41,6 @@ int os_exists(char *path)
     {
       get_array_slice(entry, entry_name, 3, 31);
     }
-
     entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
 
     if (entry_type == 2 && !strcmp(entry_name, next_dir))

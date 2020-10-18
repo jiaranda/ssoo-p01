@@ -26,4 +26,5 @@ u_int32_t check_block_in_bitmap(u_int32_t block_id);
 uint32_t get_empty_block_pointer(bool use_block);
 void get_no_name_path(char *path, char *no_name_path);
 int dir_exists(char *path);
+int get_empty_entry(uint32_t dir_block_number);
 // void get_filename(char *path, char *filname);

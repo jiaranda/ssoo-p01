@@ -14,7 +14,7 @@ osFile *os_open(char *path, char mode)
   osFile *new_file = calloc(1, sizeof(osFile));
 
   // without a valid path, returns invalid
-  if (!dir_exists(path))
+  if (dir_exists(path) == -1)
   {
     fprintf(stderr, "ERROR: os_open. Path does not exist.\n");
     new_file->filetype = INVALID;
@@ -40,12 +40,12 @@ osFile *os_open(char *path, char mode)
   }
 
   // entry attributes
-  uint32_t entry_address;
   unsigned char entry[32];
   int entry_type;
   uint32_t entry_pointer;
   char entry_name[29];
   char file_name[29] = {0};
+  int block_is_full = 1;
 
   // load disk pointer
   FILE *fp = fopen(disk_path, "rb");
@@ -90,7 +90,7 @@ osFile *os_open(char *path, char mode)
         entry_type = entry[0] >> 6;
         if (!entry_type)
         {
-          entry_address = 2048 * entry_pointer + 32 * k;
+          block_is_full = 0;
           break;
         }
       }
@@ -102,7 +102,7 @@ osFile *os_open(char *path, char mode)
   if (mode == 'w')
   {
     // handle full address block
-    if (!entry_address)
+    if (block_is_full)
     {
       fprintf(stderr, "ERROR: os_open. The address block is full.\n");
       new_file->filetype = INVALID;
@@ -135,7 +135,20 @@ osFile *os_open(char *path, char mode)
       new_file->filetype = INVALID;
       return new_file;
     }
-    fseek(fpw, entry_address, SEEK_SET);
+
+    // find empty entry address
+    uint32_t dir_block_number = dir_exists(path);
+    printf("dir block number: %d\n", dir_block_number);
+    int entry_number = get_empty_entry(dir_block_number);
+    if (entry_number == -1)
+    {
+      printf("ERRROR: os_open. Couldn't find empty entry\n");
+      new_file->filetype = INVALID;
+      return new_file;
+    }
+
+    // write new entry
+    fseek(fpw, dir_block_number * 2048 + entry_number * 32, SEEK_SET);
     fwrite(new_entry_head, 3, 1, fpw);
     fwrite(file_name, 29, 1, fpw);
     fclose(fpw);

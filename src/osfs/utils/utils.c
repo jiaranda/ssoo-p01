@@ -73,20 +73,13 @@ u_int32_t check_block_in_bitmap(u_int32_t block_id)
     return 0;
   }
   uint block_offset = 1;
-  u_int32_t bitmap_block = (u_int32_t)((block_id) / ((1 << 11) * 8));
-  // printf("Bloque: %d, Bloque de bitmap: %d\n", block_id, bitmap_block);
-  u_int32_t byte_inside_bitmap_block = (u_int32_t)((block_id - bitmap_block * 2048 * 8) / 8);
-  // printf("Byte dentro del bloque: %d\n", byte_inside_bitmap_block);
+  u_int32_t byte_inside_bitmap_block = (u_int32_t)(block_id / 8);
   u_int32_t bit_inside_byte = block_id % 8;
-  // printf("Bit dentro del byte: %d\n", bit_inside_byte);
-  fseek(fp, 2048 * (bitmap_block + 1), SEEK_SET);
 
   unsigned char byte[1];
-  fseek(fp, 2048 * (block_offset + bitmap_block) + byte_inside_bitmap_block, SEEK_SET);
+  fseek(fp, 2048 * block_offset + byte_inside_bitmap_block, SEEK_SET);
   fread(byte, 1, 1, fp);
-  // printf("asd: %d\n", (u_int32_t)byte[0]);
   u_int32_t is_used = (u_int32_t)(byte[0] >> (7 - bit_inside_byte) & 1);
-  // printf("is used: %d\n", is_used);
   fclose(fp);
   return is_used;
 }
@@ -174,12 +167,9 @@ uint32_t get_empty_block_pointer(bool use_block)
     {
       if (use_block)
       {
-        printf("%d\n", byte_count);
         FILE *fp_write = fopen(disk_path, "rb+");
         fseek(fp_write, 2048 + byte_count, SEEK_SET);
-        printf("byte antes %d\n", byte[0]);
         byte[0] = byte[0] | (1 << (7 - i));
-        printf("byte dps %d\n", byte[0]);
         fwrite(byte, 1, 1, fp_write);
         fclose(fp_write);
       }
@@ -211,7 +201,7 @@ int dir_exists(char *path)
   if (!fp)
   {
     printf("No se pudo acceder al archivo de disco\n");
-    return 0;
+    return -1;
   }
 
   // path parsing
@@ -222,7 +212,7 @@ int dir_exists(char *path)
   if (!strcmp(no_name_path, ""))
   {
     fclose(fp);
-    return 1;
+    return 0;
   }
 
   char *next_dir;
@@ -245,6 +235,7 @@ int dir_exists(char *path)
     entry_type = entry[0] >> 6;
     if (entry_type)
     {
+      entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
       get_array_slice(entry, entry_name, 3, 31);
 
       if (next_dir && !strcmp(entry_name, next_dir))
@@ -253,14 +244,38 @@ int dir_exists(char *path)
         if (!next_dir)
         {
           fclose(fp);
-          return 1;
+          return entry_pointer;
         }
         i = -1;
-        entry_pointer = (entry[0] << 16 | entry[1] << 8 | entry[2]) & BLOCK_NUM_MASK;
         fseek(fp, 2048 * entry_pointer, SEEK_SET);
       }
     }
   }
   fclose(fp);
-  return 0;
+  return -1;
+}
+
+int get_empty_entry(uint32_t dir_block_number)
+{
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    printf("No se pudo acceder al archivo de disco\n");
+    return -1;
+  }
+  unsigned char entry[32];
+  int entry_type;
+  fseek(fp, 2048 * dir_block_number, SEEK_SET);
+  for (int k = 0; k < 64; k++)
+  {
+    fread(entry, 32, 1, fp);
+    entry_type = entry[0] >> 6;
+    if (!entry_type)
+    {
+      fclose(fp);
+      return k;
+    }
+  }
+  fclose(fp);
+  return -1;
 }
