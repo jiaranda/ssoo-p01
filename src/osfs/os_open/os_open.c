@@ -144,6 +144,7 @@ osFile *os_open(char *path, char mode)
     {
       printf("ERRROR: os_open. Couldn't find empty entry\n");
       new_file->filetype = INVALID;
+      fclose(fpw);
       return new_file;
     }
 
@@ -159,10 +160,4 @@ osFile *os_open(char *path, char mode)
     strcpy(new_file->name, file_name);
   }
   return new_file;
-}
-
-int os_close(osFile *file_desc)
-{
-  free(file_desc);
-  return 0;
 }
