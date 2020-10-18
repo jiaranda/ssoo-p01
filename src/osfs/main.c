@@ -12,11 +12,12 @@ int main(int argc, char *argv[])
   //   printf("Inode\t\t%d\n", file->inode);
   // }
   // os_close(file);
-  os_rm("IMPORTANT.txt");
+  // os_rm("IMPORTANT.txt");
 
   // os_ls("/");
   // printf("\n\nWa hacer mkdir\n");
-  os_mkdir("/test3");
-  os_ls("/");
+  // os_mkdir("/test3");
+  // os_ls("/");
+  os_hardlink("hola", "chao");
   return 0;
 }
