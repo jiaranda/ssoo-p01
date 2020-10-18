@@ -13,6 +13,10 @@ int main(int argc, char *argv[])
   // }
   // os_close(file);
   os_rm("IMPORTANT.txt");
+
+  // os_ls("/");
+  // printf("\n\nWa hacer mkdir\n");
+  os_mkdir("/test3");
   os_ls("/");
   return 0;
 }
