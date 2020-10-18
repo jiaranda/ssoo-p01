@@ -279,3 +279,15 @@ int get_empty_entry(uint32_t dir_block_number)
   fclose(fp);
   return -1;
 }
+
+void get_block_in_bitmap(u_int32_t block_id, u_int32_t* return_array)
+{
+
+  u_int32_t bitmap_block = (u_int32_t)((block_id) / ((1 << 11) * 8));
+  u_int32_t byte_inside_bitmap_block = (u_int32_t)((block_id - bitmap_block * 2048 * 8) / 8);
+  u_int32_t bit_inside_byte = block_id % 8;
+
+  return_array[0] = bitmap_block;
+  return_array[1] = byte_inside_bitmap_block;
+  return_array[2] = bit_inside_byte;
+};
