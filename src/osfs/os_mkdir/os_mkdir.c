@@ -29,7 +29,7 @@ int os_mkdir(char *path)
   // osFile attributes
   unsigned char entry[32];
   int entry_type;
-  uint32_t entry_pointer;
+  uint32_t entry_pointer = 0;
   char entry_name[29];
 
   for (int i = 0; i < 64; i++)
@@ -74,14 +74,16 @@ int os_mkdir(char *path)
           break;
         }
       }
+      fclose(fp);
+      printf("Estoy acaaaaa\n");
       char *next_final_dir = strtok(NULL, "/");
       if (!next_final_dir)
       {
         // --- Si tiene un punto (···/actual.algo), error de archivo
-        if (strchr(entry_name, '.'))
+        if (strchr(entry_name, '.') == NULL)
         {
           fprintf(stderr, "ERROR: os_mkdir. cannot create directory with file's name.\n");
-          fclose(fp);
+          // fclose(fp);
           return 0;
         }
         // --- Si no --> yaaaay hago mkdir
@@ -90,7 +92,7 @@ int os_mkdir(char *path)
           if (block_is_full)
           {
             fprintf(stderr, "ERROR: os_mkdir. The address block is full.\n");
-            fclose(fp);
+            // fclose(fp);
             return 0;
           }
           // get first empty block from bitmap and use it
@@ -100,7 +102,7 @@ int os_mkdir(char *path)
           if (!empty_block)
           {
             fprintf(stderr, "ERROR: os_mkdir. Disk is completely full.\n");
-            fclose(fp);
+            // fclose(fp);
             return 0;
           }
 
@@ -125,7 +127,7 @@ int os_mkdir(char *path)
           if (entry_number == -1)
           {
             printf("ERRROR: os_mkdir. Couldn't find empty entry\n");
-            fclose(fp);
+            // fclose(fp);
             return 0;
           }
           // write new entry
@@ -133,7 +135,7 @@ int os_mkdir(char *path)
           fwrite(new_entry_head, 3, 1, fpw);
           fwrite(file_name, 29, 1, fpw);
           fclose(fpw);
-          fclose(fp);
+          // fclose(fp);
           return 1;
 
         }
@@ -142,11 +144,12 @@ int os_mkdir(char *path)
       {
         // - Si quedan mas nombres (···/ACTUAL/foo/bar) path malo
         fprintf(stderr, "ERROR: el path está incorrecto.\n");
-        fclose(fp);
+        // fclose(fp);
         return 0;
       }
     }
   }
+  fclose(fp);
   printf("Ah taba el mkdir\n");
   return 1;
 }

@@ -169,7 +169,9 @@ uint32_t get_empty_block_pointer(bool use_block)
       {
         FILE *fp_write = fopen(disk_path, "rb+");
         fseek(fp_write, 2048 + byte_count, SEEK_SET);
+        printf("byte_count + 2048: %d", 2048 + byte_count);
         byte[0] = byte[0] | (1 << (7 - i));
+        printf("%d\n", byte[0]);
         fwrite(byte, 1, 1, fp_write);
         fclose(fp_write);
       }
