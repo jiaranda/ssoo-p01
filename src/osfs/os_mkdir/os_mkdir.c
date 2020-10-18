@@ -35,6 +35,14 @@ int os_mkdir(char *path)
   for (int i = 0; i < 64; i++)
   {
     fread(entry, 32, 1, fp);
+
+    if (!next_dir)
+    {
+      printf("[ERROR] mkdir: the directory already exists\n");
+      fclose(fp);
+      return 0;
+    }
+    
     entry_type = entry[0] >> 6;
     if (entry_type)
     {
@@ -55,6 +63,7 @@ int os_mkdir(char *path)
     }
     if (i == 63)
     {
+      printf("ENTREEE\n");
       /* 
       Si termino de recorrer un directorio y no coincide nombre actual
       - Si nombre actual es el ultimo (···/actual)
@@ -74,14 +83,18 @@ int os_mkdir(char *path)
           break;
         }
       }
+      // printf("fp before: %d\n", fp);
       fclose(fp);
-      printf("Estoy acaaaaa\n");
+      // printf("fp after: %d\n", fp);
+      // printf("Estoy acaaaaa\n");
+
       char *next_final_dir = strtok(NULL, "/");
       if (!next_final_dir)
       {
         // --- Si tiene un punto (···/actual.algo), error de archivo
-        if (strchr(entry_name, '.') == NULL)
+        if (strchr(next_dir, '.'))
         {
+          // printf("%s", strchr(entry_name, '.'));
           fprintf(stderr, "ERROR: os_mkdir. cannot create directory with file's name.\n");
           // fclose(fp);
           return 0;
@@ -96,6 +109,7 @@ int os_mkdir(char *path)
             return 0;
           }
           // get first empty block from bitmap and use it
+          // fclose(fp);
           uint32_t empty_block = get_empty_block_pointer(1);
 
           // handle a completely filled disk
@@ -113,7 +127,7 @@ int os_mkdir(char *path)
           new_entry_head[0] = tmp_head >> 16;        // esto funciona, es 64
           new_entry_head[1] = (tmp_head >> 8) & 255; // WIP
           new_entry_head[2] = tmp_head & 255;
-
+          printf("WA ESCRIBIR ENTRY\n");
           FILE *fpw = fopen(disk_path, "rb+");
           if (!fpw)
           {
@@ -122,7 +136,7 @@ int os_mkdir(char *path)
           }
           // find empty entry address
           uint32_t dir_block_number = dir_exists(path);
-          printf("dir block number: %d\n", dir_block_number);
+          // printf("dir block number: %d\n", dir_block_number);
           int entry_number = get_empty_entry(dir_block_number);
           if (entry_number == -1)
           {
@@ -149,7 +163,7 @@ int os_mkdir(char *path)
       }
     }
   }
-  fclose(fp);
-  printf("Ah taba el mkdir\n");
-  return 1;
+  // fclose(fp);
+  // printf("Ah taba el mkdir\n");
+  return 0;
 }
