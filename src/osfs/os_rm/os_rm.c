@@ -12,9 +12,9 @@ int os_rm(char *path){
 
 	if (exists){
 	
-		printf("El path es %s\n", path);
+		//printf("El path es %s\n", path);
 		osFile* file = os_open(path, 'r');
-		printf("%d\t%d\t%s\n", file->filetype, file->inode, file->name);
+		//printf("%d\t%d\t%s\n", file->filetype, file->inode, file->name);
 		//os_close(file);
 		int block_file = file -> inode;
 		char name[29];
@@ -30,7 +30,7 @@ int os_rm(char *path){
 		fseek(fp, 2048 * block_file , SEEK_SET);
 		unsigned char hardlinks[0];
 		fread(hardlinks, 1, 1, fp);
-		printf("La cantidad de hardlinks es %d\n", hardlinks[0]);
+		//printf("La cantidad de hardlinks es %d\n", hardlinks[0]);
 		// Si tenemos un hardlink, debemos marcar todos los bloques del archivo como 0 en bitmap ok :D
 		if (hardlinks[0] == 1){
 			int directory_entry = dir_exists(path);
@@ -51,7 +51,7 @@ int os_rm(char *path){
 					fseek(fp, 2048 * directory_entry + 32* i, SEEK_SET);
 					fwrite(entry, 3, 1, fp);
 
-					printf("Encontré el archivo\n");
+					//printf("Encontré el archivo\n");
 				}
 			}
 
@@ -68,7 +68,7 @@ int os_rm(char *path){
 			fseek(write_file, 2048 * (data_array[0]+1) + data_array[1], SEEK_SET);
 			unsigned char byte[0];
 			fread(byte, 1, 1, write_file);
-			printf("El valor del byte es: %d\n", byte[0]);
+			//printf("El valor del byte es: %d\n", byte[0]);
 			if (data_array[2]==0){
 				byte[0] = byte[0] & 127; 
 			}
@@ -101,7 +101,7 @@ int os_rm(char *path){
 			// marcamos el hardlink en 0
 			fseek(fp, 2048 * block_file , SEEK_SET);
 			hardlinks[0]= hardlinks[0] &0;
-			printf("El nuevo harlink es: %d\n", hardlinks[0]);
+			//printf("El nuevo harlink es: %d\n", hardlinks[0]);
 			fwrite("0", 1, 1, fp);
 			fclose(fp);
 
@@ -137,7 +137,7 @@ int os_rm(char *path){
 					fseek(fp, 2048 * directory_entry + 32* i, SEEK_SET);
 					fwrite(entry, 3, 1, fp);
 
-					printf("Encontré el archivo\n");
+					//printf("Encontré el archivo\n");
 				}
 			}
 
