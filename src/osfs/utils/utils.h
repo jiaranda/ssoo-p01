@@ -16,6 +16,7 @@ typedef struct OSFile
   Filetype filetype;
   uint32_t inode; // disk address
   char name[29];
+  uint32_t total_read_bytes;
 } osFile;
 
 uint count_bits_1(unsigned char byte);
@@ -28,3 +29,7 @@ void get_no_name_path(char *path, char *no_name_path);
 int dir_exists(char *path);
 int get_empty_entry(uint32_t dir_block_number);
 // void get_filename(char *path, char *filname);
+
+// read funtcions
+uint64_t read_file_size(uint64_t disk_address, int bytes_to_read);
+uint32_t read_index_block(uint64_t disk_address, void *buffer, int bytes_to_read, int bytes_read);

@@ -12,6 +12,7 @@ osFile *os_open(char *path, char mode)
 {
   // initialize new_file
   osFile *new_file = calloc(1, sizeof(osFile));
+  new_file->total_read_bytes = 0;
 
   // without a valid path, returns invalid
   if (dir_exists(path) == -1)

@@ -4,6 +4,7 @@
 
 extern char *disk_path;
 extern uint32_t BLOCK_NUM_MASK;
+extern uint32_t READ_BUFFER_SIZE;
 
 uint count_bits_1(unsigned char byte)
 {
@@ -278,4 +279,114 @@ int get_empty_entry(uint32_t dir_block_number)
   }
   fclose(fp);
   return -1;
+}
+
+uint64_t read_file_size(uint64_t disk_address, int bytes_to_read)
+{
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    fprintf(stderr, "ERROR: os_read. Couldn't open file\n");
+    return 0;
+  }
+
+  // get metadata
+  fseek(fp, disk_address, SEEK_SET);
+  uint64_t size = fread(fp, bytes_to_read, 1, "rb");
+  fclose(fp);
+  return size;
+}
+
+uint32_t read_index_block(uint64_t disk_address, void *buffer, int bytes_to_read, int bytes_read)
+{
+  // get file pointer
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    fprintf(stderr, "ERROR: os_read. Couldn't open file\n");
+    return 0;
+  }
+
+  // get metadata
+  fseek(fp, disk_address, SEEK_SET);
+
+  while (bytes_to_read > 0)
+  {
+    uint32_t pointer = fread(fp, 4, 1, "rb");
+    if (bytes_to_read > 2048 * 512)
+    {
+      read_indirect_block(pointer * 2048, buffer, 2048 * 512);
+      bytes_to_read -= 2048 * 512;
+    }
+    else
+    {
+      read_indirect_block(pointer * 2048, buffer, bytes_to_read);
+    }
+  }
+  // close file pointer
+  fclose(fp);
+}
+
+uint32_t read_indirect_block(uint64_t disk_address, void *buffer, int bytes_to_read, int bytes_read)
+{
+  // get file pointer
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    fprintf(stderr, "ERROR: os_read. Couldn't open file\n");
+    return 0;
+  }
+
+  fseek(fp, disk_address, SEEK_SET);
+  while (bytes_to_read > 0)
+  {
+    uint64_t pointer = fread(fp, 4, 1, "rb");
+    if (bytes_to_read > 2048)
+    {
+      read_data_block(pointer * 2048, buffer, 2048);
+      bytes_to_read -= 2048;
+    }
+    else
+    {
+      read_data_block(pointer * 2048, buffer, bytes_to_read);
+    }
+  }
+
+  // close file
+  fclose(fp);
+}
+
+uint32_t read_data_block(uint64_t disk_address, void *buffer, int bytes_to_read, int bytes_read)
+{
+  // get file pointer
+  FILE *fp = fopen(disk_path, "rb");
+  if (!fp)
+  {
+    fprintf(stderr, "ERROR: os_read. Couldn't open file\n");
+    return 0;
+  }
+
+  fseek(fp, disk_address, SEEK_SET);
+  while (bytes_to_read > 0)
+  {
+    if (bytes_to_read > READ_BUFFER_SIZE)
+    {
+      unsigned char read_buffer[READ_BUFFER_SIZE] = fread(fp, READ_BUFFER_SIZE, 1, "rb");
+      fprintf(buffer, read_buffer);
+      bytes_to_read -= READ_BUFFER_SIZE;
+    }
+    else
+    {
+      unsigned char read_buffer[bytes_to_read] = fread(fp, bytes_to_read, 1, "rb");
+      fprintf(buffer, read_buffer);
+    }
+
+    // close file
+    fclose(fp);
+  }
+
+  unsigned char read_buffer[READ_BUFFER_SIZE];
+
+  // close file pointer
+  fclose(fp);
 }
