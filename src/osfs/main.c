@@ -13,6 +13,6 @@ int main(int argc, char *argv[])
   // }
   // os_close(file);
   os_rm("IMPORTANT.txt");
-  //os_ls("/memes");
+  os_ls("/");
   return 0;
 }
