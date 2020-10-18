@@ -144,7 +144,7 @@ int os_rm(char *path){
 			// el i nodo es block_file
 			fseek(fp, 2048 * block_file , SEEK_SET);
 			fwrite(hardlinks, 1, 1, fp);
-			printf("Se ha eliminado una referencia al archivo");
+			printf("Se ha eliminado una referencia al archivo\n");
 			os_close(file);
 			return 1;
 		}

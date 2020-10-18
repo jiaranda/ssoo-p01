@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
   // printf("\n\nWa hacer mkdir\n");
   // os_mkdir("/test3");
   // os_ls("/");
-  os_hardlink("hola", "chao");
+  os_hardlink("IMPORTANT.txt", "chao4.txt");
+  os_rm("IMPORTANT.txt");
+  os_ls("/");
   return 0;
 }
