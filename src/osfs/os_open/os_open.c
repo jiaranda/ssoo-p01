@@ -17,7 +17,7 @@ osFile *os_open(char *path, char mode)
   // without a valid path, returns invalid
   if (dir_exists(path) == -1)
   {
-    fprintf(stderr, "ERROR: os_open. Path does not exist.\n");
+    fprintf(stderr, "[ERROR] os_open: Path does not exist.\n");
     new_file->filetype = INVALID;
     return new_file;
   }
@@ -25,7 +25,7 @@ osFile *os_open(char *path, char mode)
   // if file exists in w mode or doesn't in r mode, returns invalid
   if ((mode == 'w' && os_exists(path)) || (mode == 'r' && !os_exists(path)))
   {
-    fprintf(stderr, "ERROR: os_open. Invalid operation.\n");
+    fprintf(stderr, "[ERROR] os_open: Invalid operation.\n");
     new_file->filetype = INVALID;
     return new_file;
   }
@@ -52,7 +52,7 @@ osFile *os_open(char *path, char mode)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    fprintf(stderr, "ERROR: os_open. Error while reading disk.\n");
+    fprintf(stderr, "[ERROR] os_open: Error while reading disk.\n");
     return 0;
   }
 
@@ -105,7 +105,7 @@ osFile *os_open(char *path, char mode)
     // handle full address block
     if (block_is_full)
     {
-      fprintf(stderr, "ERROR: os_open. The address block is full.\n");
+      fprintf(stderr, "[ERROR] os_open: The address block is full.\n");
       new_file->filetype = INVALID;
       return new_file;
     }
@@ -116,7 +116,7 @@ osFile *os_open(char *path, char mode)
     // handle a completely filled disk
     if (!empty_block)
     {
-      fprintf(stderr, "ERROR: os_open. Disk is completely full.\n");
+      fprintf(stderr, "[ERROR] os_open: Disk is completely full.\n");
       new_file->filetype = INVALID;
       return new_file;
     }
@@ -132,18 +132,17 @@ osFile *os_open(char *path, char mode)
     FILE *fpw = fopen(disk_path, "rb+");
     if (!fpw)
     {
-      fprintf(stderr, "ERROR: os_open. Couldn't write on file.\n");
+      fprintf(stderr, "[ERROR] os_open: Couldn't write on file.\n");
       new_file->filetype = INVALID;
       return new_file;
     }
 
     // find empty entry address
     uint32_t dir_block_number = dir_exists(path);
-    printf("dir block number: %d\n", dir_block_number);
     int entry_number = get_empty_entry(dir_block_number);
     if (entry_number == -1)
     {
-      printf("ERRROR: os_open. Couldn't find empty entry\n");
+      printf("[ERROR] os_open: Couldn't find empty entry\n");
       new_file->filetype = INVALID;
       fclose(fpw);
       return new_file;
