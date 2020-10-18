@@ -6,7 +6,9 @@
 #include "os_open/os_open.h"
 #include "os_exists/os_exists.h"
 #include "os_ls/os_ls.h"
+#include "os_rm/os_rm.h"
 #include "os_mkdir/os_mkdir.h"
+
 
 // General Functions
 int os_exists(char *path);
