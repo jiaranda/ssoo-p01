@@ -10,7 +10,7 @@ int os_mkdir(char *path)
   FILE *fp = fopen(disk_path, "rb");
   if (!fp)
   {
-    fprintf(stderr, "ERROR: No se pudo leer el disco.\n");
+    fprintf(stderr, "[ERROR] os_mkdir: could not open disk.\n");
     return 0;
   }
 
@@ -38,7 +38,7 @@ int os_mkdir(char *path)
 
     if (!next_dir)
     {
-      printf("[ERROR] mkdir: the directory already exists\n");
+      printf("[ERROR] os_mkdir: the directory already exists\n");
       fclose(fp);
       return 0;
     }
@@ -50,7 +50,7 @@ int os_mkdir(char *path)
     }
     if (entry_type == 1 && !strcmp(entry_name, next_dir)) // archivo --> termina
     {
-      fprintf(stderr, "ERROR: no se puede ejecutar comando os_mkdir sobre un archivo.\n");
+      fprintf(stderr, "[ERROR] os_mkdir: cannot execute os_mkdir with filename\n");
       fclose(fp);
       return 0;
     }
@@ -82,7 +82,7 @@ int os_mkdir(char *path)
         // --- Si tiene un punto (···/actual.algo), error de archivo
         if (strchr(next_dir, '.'))
         {
-          fprintf(stderr, "ERROR: os_mkdir. cannot create directory with file's name.\n");
+          fprintf(stderr, "[ERROR] os_mkdir: cannot create directory with file's name.\n");
           return 0;
         }
         // --- Si no --> yaaaay hago mkdir
@@ -90,7 +90,7 @@ int os_mkdir(char *path)
         {
           if (block_is_full)
           {
-            fprintf(stderr, "ERROR: os_mkdir. The address block is full.\n");
+            fprintf(stderr, "[ERROR] os_mkdir: The address block is full.\n");
             // fclose(fp);
             return 0;
           }
@@ -99,7 +99,7 @@ int os_mkdir(char *path)
           // handle a completely filled disk
           if (!empty_block)
           {
-            fprintf(stderr, "ERROR: os_mkdir. Disk is completely full.\n");
+            fprintf(stderr, "[ERROR] os_mkdir: Disk is completely full.\n");
             return 0;
           }
           // write new entry
@@ -112,7 +112,7 @@ int os_mkdir(char *path)
           FILE *fpw = fopen(disk_path, "rb+");
           if (!fpw)
           {
-            fprintf(stderr, "ERROR: os_mkdir. Couldn't write on file.\n");
+            fprintf(stderr, "[ERROR] os_mkdir: Couldn't write on file.\n");
             return 0;
           }
           // find empty entry address
@@ -120,7 +120,7 @@ int os_mkdir(char *path)
           int entry_number = get_empty_entry(dir_block_number);
           if (entry_number == -1)
           {
-            printf("ERRROR: os_mkdir. Couldn't find empty entry\n");
+            printf("[ERRROR] os_mkdir: Couldn't find empty entry\n");
             return 0;
           }
           // write new entry
@@ -134,7 +134,7 @@ int os_mkdir(char *path)
       else
       {
         // - Si quedan mas nombres (···/ACTUAL/foo/bar) path malo
-        fprintf(stderr, "ERROR: el path está incorrecto.\n");
+        fprintf(stderr, "[ERROR] os_mkdir: incorrect format for given path.\n");
         return 0;
       }
     }
