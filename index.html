@@ -1,0 +1,773 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Documentación os_API</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="7f67fc42-44f1-43b9-97dd-4e0c98a3b75c" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">📖</span></div><h1 class="page-title">Documentación os_API</h1></header><div class="page-body"><hr id="7748e7f6-790f-4169-9db2-d9bbc7e292a0"/><h1 id="9f88e255-c2e6-439f-ae9b-5ea62d2c381e" class="">Integrantes - Grupo Among OS</h1><ul id="cb37b99f-d052-49d3-89b6-efa93eb87026" class="bulleted-list"><li>Vicente Águila Cea</li></ul><ul id="c2e75a96-5646-41c3-bc52-6319f59558cb" class="bulleted-list"><li>Javier Aranda Pizarro</li></ul><ul id="9891484d-d60e-4c89-8279-95b44c79cd3f" class="bulleted-list"><li>Nicolás Riera Ovalle</li></ul><ul id="69604e71-88ca-4de0-b764-2fef73e5464c" class="bulleted-list"><li>Claudio Scheihing Cuevas</li></ul><p id="7858df01-9584-4f60-a76e-4d64de5f6784" class="">
+</p><h1 id="82f285d3-8908-43d7-8ec3-fc4459410d5d" class="">Índice</h1><figure id="87adb776-0832-49cf-910b-8455e1487a93" class="link-to-page"><a href="os_mount.html"><span class="icon">🏗️</span>os_mount</a></figure><figure id="f7d027e7-dd6c-4c9b-9421-8ac3f20fc4b6" class="link-to-page"><a href="os_bitmap.html"><span class="icon">🗺️</span>os_bitmap</a></figure><figure id="2799866d-e6b8-49dd-bfb3-dbc9fdcb9bcd" class="link-to-page"><a href="os_exists.html"><span class="icon">❓</span>os_exists</a></figure><figure id="869cb004-dd44-405b-bc65-33725c08ec8a" class="link-to-page"><a href="os_ls.html"><span class="icon">📄</span>os_ls</a></figure><figure id="947371da-6e03-4813-9fed-1bfb68b345b4" class="link-to-page"><a href="os_mkdir.html"><span class="icon">➕</span>os_mkdir</a></figure><figure id="9c8e8b8c-59b2-456d-9af0-775dfdd03155" class="link-to-page"><a href="os_open.html"><span class="icon">📂</span>os_open</a></figure><figure id="708f9cf4-9712-404f-bbcd-6a0fbc35ec34" class="link-to-page"><a href="os_rm.html"><span class="icon">🚮</span>os_rm</a></figure><figure id="15c2bc08-9e4e-4898-b7e6-adbd2161bf68" class="link-to-page"><a href="os_close.html"><span class="icon">📁</span>os_close</a></figure><figure id="21496a49-8c76-4b04-b60d-bdffd720aecb" class="link-to-page"><a href="os_hardlink.html"><span class="icon">🔗</span>os_hardlink</a></figure>
+
+<h1 id="2dce8a04-41e5-4c15-b162-f5af271c600a" class="">Funciones</h1><h2 id="4709e7df-2ffc-43ed-8072-bf3b1cb74aa0" class=""><code>os_mount(char* diskname)</code></h2><hr id="07ccf697-4358-41e7-918a-18080dd36821"/><p id="a7ed9b57-d4ed-4a3c-8a64-4c679c818207" class=""><strong>SYNOPSIS</strong></p><pre id="2f153e46-aa72-4a54-a289-eff336f3c2dc" class="code"><code>void os_mount(char *diskname);</code></pre><p id="a338b456-ee80-40cf-be44-d8ff371957ff" class="">
+</p><p id="77abb911-5cea-4e4e-97d6-5e439d84c1f6" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="8740939b-9df7-417b-b2bc-cb4ddff5a30f" class="">Establece la ubicación del disco disponible para el resto de las funciones de la API.</p></div></p><p id="c35962c1-7b81-43db-9346-0329f4e393c7" class="">
+</p><p id="048f2b2d-4de9-49b3-9486-9826ec73814b" class=""><strong>PARAMETERS</strong><div class="indented"><p id="b6b469aa-c301-4e83-b0c3-3a9faa9dcc82" class=""><code>char *diskname</code>: <em>path</em> relativo a la ubicación del disco.</p></div></p><p id="7d858c02-1133-4086-9b9c-65918431884d" class="">
+</p><p id="0e811a27-430d-4dbc-b11b-bb2a91292fb6" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="1f608e12-bcd4-45c2-a862-1865fff476cc" class="">La función <code>os_mount</code> no tiene valor de retorno.</p></div></p><p id="28c736f7-ddaa-4fac-be17-13c0cb01a6a4" class="">
+</p><p id="bb2e64d9-2bd1-49eb-a3eb-00cec2968386" class=""><strong>ERROR HANDLING</strong><div class="indented"><p id="6671207c-eb10-4315-88dd-39d1ab318b53" class="">La función <code>os_mount</code>no maneja errores.</p></div></p><p id="7a67cf08-6f0e-483c-a2da-d6d71baa6989" class="">
+</p><p id="aeab4427-9f6b-481d-9ca6-99b796eae72c" class=""><strong>EXAMPLE</strong></p><pre id="f49ef86e-219d-4679-b414-3c6997140fa9" class="code"><code>os_mount(&quot;data/simdiskfilled.bin&quot;);</code></pre><p id="9a48d5df-7118-428c-805f-0e8c24f9347f" class="">
+</p><h2 id="1adbaed4-5513-4381-a40b-d81a7b17e7ec" class=""><code>os_bitmap(char* path, char mode)</code></h2><hr id="cbbd5ace-6c41-46fb-9d6a-07b5774ca780"/><p id="8ff35dbf-3e04-49e7-8fd2-58be62876899" class=""><strong>SYNOPSIS</strong></p><pre id="01204d05-4e9e-44c6-9737-d4ae651f58cb" class="code"><code>#include &quot;os_API.h&quot;
+
+void os_bitmap(unsigned num, bool hex);</code></pre><p id="4c778847-95d3-45b8-9eee-e2b2abe32817" class="">
+</p><p id="0fea3c87-8171-45f4-995d-cba0bc029be5" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="6c07b670-51ff-4372-9166-c730ec410c24" class="">La función imprime en <code>stderr</code> el contenido del bloque <code>num</code> del bitmap del disco. Si <code>num</code> es 0, imprime todo el bitmap, junto con un resumen de la cantidad de bloques ocupados.</p></div></p><p id="9678a19e-d91d-46cb-b8c3-be596ea9b0f8" class="">
+</p><p id="258f73c6-ccd5-450d-92af-20538fa806e0" class=""><strong>PARAMETERS</strong><div class="indented"><ul id="fee67350-1089-4183-9028-7f88b7e96a29" class="bulleted-list"><li><code>unsigned num</code>: indica el número de bloque a imprimir (entre 0 y 64).  Si es 0, imprime todo el bitmap, junto a un resumen de la cantidad de bloques ocupados. </li></ul><ul id="07bfeb2d-e4b6-48e6-b09a-d9f31b708a7a" class="bulleted-list"><li><code>bool hex</code>: si es <code>true</code> imprime el bitmap en hexadecimal. En otro caso, imprime en binario.</li></ul><p id="45ac9a09-93c7-4b1f-be7a-898ace4da217" class="">
+</p></div></p><p id="48229c5d-7744-4df4-b90d-27ce092bb425" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="cd6e69ae-84b7-441c-a62c-3fb87eed6814" class="">La función <code>os_bitmap</code> no tiene valor de retorno.</p><p id="262eb442-e902-43fe-8320-f6391d8dfa03" class="">
+</p></div></p><p id="9b5bfb71-d87b-4348-868c-03bd28b855e7" class=""><strong>ERROR HANDLING</strong><div class="indented"><p id="29d96945-1306-4251-ac12-56b4af327f2b" class="">Si <code>num &gt; 64</code> no se imprime nada.</p></div></p><p id="2a8f8388-1796-4720-b0ce-5e790237babb" class="">
+</p><p id="3d73602b-7ec0-4a60-8330-79c543a69489" class=""><strong>EXAMPLE</strong></p><pre id="d6e17b89-0c53-45b4-9ab0-cd4c5ffd096c" class="code"><code>#include &quot;os_API.h&quot;
+
+void os_bitmap(10, true);</code></pre><p id="c82de76a-ccd7-4026-b97e-84d9de1d24b4" class="">
+</p><h2 id="ed5bb859-7564-4c9d-8abf-2654f3b94694" class=""><code>os_exists(char* path, char mode)</code></h2><hr id="bf75f88e-8c67-4520-b081-a0109e7cd4ff"/><p id="2541d019-b245-4387-b8b9-bc8ce09df073" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="db196c55-d9aa-4ef9-8bf9-77ae90c40eb2" class="">La función <code>os_exists</code> verifica la existencia de un archivo en el disco.</p><p id="cdb70d70-cdc7-46b6-909d-ff7b4656db5f" class="">
+</p></div></p><p id="bae5798c-8180-4de7-bbbb-c48914fec795" class=""><strong>PARAMETERS</strong><div class="indented"><p id="f9c9d4c7-df24-49ab-aaf7-226d2a4e648e" class=""><code>char *path</code>: <em>path</em> al archivo que se está buscando.</p><p id="3fd73a6d-3fdf-413c-90f3-f7957cf9ceb3" class="">
+</p></div></p><p id="7849fb0f-a2db-4c19-a197-2e4ecddd7d5c" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="bb95b152-e9c9-4d8b-99c8-48caece18857" class="">La función <code>os_exists</code> retorna un entero: 1 en caso de que exista y 0 en caso de que no.</p><p id="ed291854-a4b7-41ea-8757-f44d6fd5df0a" class="">
+</p></div></p><p id="6e7cdf13-c214-4d8f-8ab5-607db9df1b1c" class=""><strong>ERROR HANDLING</strong></p><ul id="2c1565be-391e-4371-9ffd-b4c07ac48718" class="bulleted-list"><li>Si no se logra leer el disco, se imprime el error y se finaliza la ejecución.</li></ul><ul id="2b804a3c-a17a-4a02-a392-fe627a85cac8" class="bulleted-list"><li>Si <code>char *path</code> no tiene el formato correcto, separado por <code>/</code> y  con un archivo al final, imprime</li></ul><p id="9b23caf0-4926-492f-9093-500c82707d8f" class="">
+</p><p id="30380332-2f6d-44f5-bf9a-8ced6bc79ee2" class=""><strong>EXAMPLE</strong></p><pre id="8a5ce859-ab9e-4599-a7cc-249ab3d70b74" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+	os_mount(&quot;data/simdiskfilled.bin&quot;);
+
+	// Se verifica la existencia de un archvio
+	os_exists(&quot;/memes/generic (3).png&quot;);
+}</code></pre><p id="88989503-f74d-4116-909f-8bc9dd7a0741" class="">
+</p><h2 id="4d9c423e-0c74-4d4e-90cd-fc1ab753c226" class=""><code>os_ls(char* path)</code></h2><hr id="a5d9e100-4000-4221-8fd7-873922695e6e"/><p id="fb454d06-ab11-4301-a337-9312fc5fed71" class=""><strong>SYNOPSIS</strong><div class="indented"><pre id="5df0994c-f0dd-4488-9717-bbcceff82759" class="code"><code># include &lt;string.h&gt;
+# include &lt;stdint.h&gt;
+
+void os_ls(char* path);</code></pre></div></p><p id="d0453b8d-18c7-4bb1-b7b5-09607e5a84e1" class="">
+</p><p id="2e7802c6-9a2d-4587-9c55-9b1a810dd7ca" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="f4b97693-3560-4337-8dc8-192624c030f1" class="">La función <code>os_ls</code> se encarga de listar todos elementos dentro de un directorio. Se imprimen en pantalla todos los archivos, <em>hardlinks</em> y directorios contenidos en la carpeta asociada al <em>path</em> entregado.</p></div></p><p id="6eb6d67a-cea1-499f-a292-d73edaea4d59" class="">
+</p><p id="c9dd77f8-5e7f-47f2-af34-678a65a877f1" class=""><strong>PARAMETERS</strong><div class="indented"><p id="175d2d7c-5b85-46fc-8386-f6d092f861ed" class=""><code>char* path</code> : <em>Path</em> en el que se encuentra el directorio sobre el que se quiere listar su contenido.</p><p id="4f10cb5e-7b70-4192-b5c7-94ad5719dba0" class="">
+</p></div></p><p id="252d9521-4b66-479f-89bb-1ccd033ef432" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="60d3afcf-f3a3-4e43-9657-5f9a36f0a17c" class="">La función <code>os_ls</code> no tiene valor de retorno.</p><p id="4e6d0eab-f4ec-4024-b68c-d18435b8c68c" class="">
+</p></div></p><p id="3a3462be-d7b3-4d04-b01f-3176c3449d1f" class=""><strong>ERROR HANDLING</strong><div class="indented"><ul id="0ed77b7d-2faf-4504-bff2-32d0100c3efc" class="bulleted-list"><li>Si no se logra leer el disco (debido a un error al ejecutar <code>fopen</code>), se imprime el error y finaliza la ejecución.</li></ul><ul id="58f99bab-c8c0-4f4d-bb29-d2869398d4f8" class="bulleted-list"><li>Si se intenta ejecutar el la función sobre el <em>path</em> de un archivo, se imprime el error y finaliza la ejecución.</li></ul><ul id="92cb90c0-079e-4e83-92cb-1cb0032a7be2" class="bulleted-list"><li>Si el <em>path</em> entregado no existe, se muestra un mensaje en pantalla.</li></ul></div></p><p id="c13d3f94-f0df-4886-85ee-da0ef51d57c4" class="">
+</p><p id="44fffff5-9d3b-4990-b0c1-363fe48efe01" class=""><strong>EXAMPLE</strong></p><pre id="92d79cc0-ca4c-4dda-83f1-6a209b25e161" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+	os_mount(&quot;data/simdiskfilled.bin&quot;);
+	
+	// Se listan los elementos de un directorio
+	os_ls(&quot;/memes&quot;);
+}</code></pre><p id="a35d8933-18cb-49b9-9498-9ba8daacf683" class="">
+</p><p id="54956b5b-0b9c-473d-9415-b1da6b1d4e61" class="">
+</p><h2 id="62f8e501-1833-48e9-bf0b-63adee911344" class=""><code>os_open(char* path, char mode)</code></h2><hr id="e5af39d4-df16-4a79-a4e0-0090fb17efc7"/><p id="36f6c939-4431-4bcd-b885-7c8a338b8bbf" class=""><strong>SYNOPSIS</strong></p><pre id="658f78c8-1a57-4cd1-8b4d-28bf32b8dce5" class="code"><code>#include &quot;os_API.h&quot;
+
+osFile *os_open(char *path, char mode); </code></pre><p id="8474756e-1932-4a57-bffe-e4844a945800" class="">
+</p><p id="08421357-036d-47f0-a4d0-1f40a8837ad2" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="f5e7d3a2-3876-4394-9931-239d0aafb184" class="">La función <code>os_open</code> se encarga de abrir un archivo y retornar un descriptor de este. </p><p id="d594dd61-9d11-4982-a18e-1354746f00a6" class="">
+</p></div></p><p id="8b96d457-2809-4677-afcb-eedee5afd0f4" class=""><strong>PARAMETERS</strong><div class="indented"><ul id="6d3e6d47-e352-446f-821a-80570dc5d7a7" class="bulleted-list"><li><code>char *path</code>: <em>path</em> en el que se encuentra el archivo.</li></ul><ul id="9c75c168-c161-45ac-8b69-0fc3f6299fd8" class="bulleted-list"><li><code>char mode</code>: indica si el archivo se abre en modo lescritura <code>&#x27;w&#x27;</code> o o lectura <code>&#x27;r&#x27;</code></li></ul><p id="5f5fa582-0e68-4dbd-97d0-11f186fd8803" class="">
+</p></div></p><p id="200e6e9f-2498-4899-a5f7-ef2fa88caabf" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="7875285b-6942-4eff-a9b6-e9f9e08a89ce" class=""><code>os_open</code> retorna un struct del tipo <code>osFile</code> que funciona como descriptor del archivo abierto.</p><p id="93aa295f-82f9-4d25-9d50-4c973042de49" class="">
+</p></div></p><p id="cd3d820a-3df4-4f95-8b1d-69e8000bf183" class=""><strong>ERROR HANDLING</strong></p><ul id="0d3b82b6-b9ba-49a9-a5f0-934a3ed14cb1" class="bulleted-list"><li>Si hay un error al leer el disco, retornará un <code>osFile</code> inválido, con el mensaje &quot;ERROR: os_open. Error while reading disk.&quot;</li></ul><p id="3eadcf2e-fa56-469d-a76b-e4c5bb252153" class="">
+</p><p id="dc0bfecb-c6aa-4009-a202-63a99cae4efb" class=""><strong>EXAMPLE</strong></p><pre id="f60e7aa6-0326-466f-a1f5-e44b3e2c7dd4" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+	os_mount(&quot;data/simdiskfilled.bin&quot;);
+	
+	// Se abre un archivo
+	osFile *file = os_open(&quot;/memes/generic (123).png&quot;, &#x27;w&#x27;);
+}
+</code></pre><p id="2cec12b8-a2ac-4511-b58c-3558c1eb9d60" class="">
+</p><h2 id="f6d07194-b232-4c24-a77f-95d0fb3de7ce" class=""><code>os_rm(char* path)</code></h2><hr id="cf43323c-e359-4dd0-becf-073f54c78f11"/><p id="de851ff5-d4ca-4520-a14a-bbadabab41f3" class=""><strong>SYNOPSIS</strong></p><pre id="835f34f0-5cea-4640-b47c-35333cd57c43" class="code"><code>#include &quot;os_API.h&quot;
+
+int os_rm(char *path);</code></pre><p id="cf5186fa-1a13-406b-b01c-9561e47ab0fe" class="">
+</p><p id="91c5496a-0e36-429b-a084-0da9bf1939fb" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="46623556-8550-4e44-b3eb-df431192e7b9" class=""><code>os_rm</code> es una función que permite eliminar un archivo que se encuentra en <code>path</code> el cual debe tener una cantidad de hardlinks iguales a 1 o bien, disminuir las referencias de el archivo representado en <code>path</code> en una unidad en el caso de que un archivo posea un hardlink mayor a 1. </p></div></p><p id="cb69e185-4945-463b-803f-ae4ae812e79d" class=""><strong>PARAMETERS</strong><div class="indented"><ul id="60d23ac4-4d90-4419-b0fd-f1a089612432" class="bulleted-list"><li><code>char *path</code>: path al archivo a eliminar.</li></ul><p id="8c05d380-b3e7-45dc-9b3b-7eedbe0b61a4" class="">
+</p></div></p><p id="3490537f-06f8-454f-8c31-e3a4804ee13b" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="ff95e3e9-f8fc-4a92-a9a6-144a8b1eadd8" class="">Retorna <code>1</code> si el archivo se eliminó o se le disminuyó en una unidad el parámetro hadrlink con éxito, <code>0</code> en otro caso.</p><p id="4a1d87f1-4270-4564-802f-45413ac353a2" class="">
+</p></div></p><p id="631882bc-8ce9-4100-a593-9b1159a97732" class=""><strong>ERROR HANDLING</strong></p><ul id="39991eee-6798-46b3-ab7e-3ec583d72546" class="bulleted-list"><li>Si hay un error al leer el disco, retornará 0, con el mensaje &quot;ERROR: os_open. Error while reading disk.&quot;</li></ul><ul id="b938de74-b6ad-4743-aed2-27548545f7f2" class="bulleted-list"><li>Si el archivo ya fue eliminado, retornará 0, con el mensaje &quot;El archivo ya se encontraba eliminado&quot;</li></ul><p id="8f9a65b2-8f6f-4ed5-b140-e9d6bb4e7533" class="">
+</p><p id="bd6f344f-1f71-4d74-9c32-bbafd8639831" class=""><strong>EXAMPLE</strong></p><pre id="7b035600-d7b4-4039-9d6e-a998d93c2889" class="code"><code>#include &quot;os_API.h&quot;
+
+int os_rm(&quot;/memes/generic (123).jpg&quot;);</code></pre><p id="e8300e45-5213-4138-a7c4-bf5b514312c8" class="">
+</p><h2 id="af955e6c-5465-4161-ae35-d13c6b96a27e" class=""><code>os_close(osFile* file_desc)</code></h2><hr id="d689daa5-adcb-44b2-bd60-e6d11e6cdd47"/><p id="39ab4923-fca6-4140-b6e1-faf5000aadb3" class=""><strong>SYNOPSIS</strong></p><pre id="220eac6d-bbd9-41fd-acda-c95178c06aad" class="code"><code>#include &quot;os_API.h&quot;
+
+int os_close(osFile *file_desc);</code></pre><p id="fa8be56d-0151-4832-876c-3b3a19962150" class="">
+</p><p id="10e971b3-3a67-4f39-9b6f-10c084a99540" class=""><strong>DESCRIPTION</strong></p><p id="bc6ddc5f-4ca7-403a-9d42-e2400ebedb86" class=""><code>os_close</code> libera el espacio en memoria utilizado por el descriptor <code>osFile</code></p><p id="3d46f21e-49d5-4816-8d09-ed72a051d7fa" class="">
+</p><p id="eaa31e1b-4922-4985-8ac5-a41472798c01" class=""><strong>PARAMETERS</strong><div class="indented"><p id="be7c23db-fd1b-41bc-ad9f-be5a59a153b3" class=""><code>osFile *file_desc</code>: puntero al descriptor <code>osFile</code> de un archivo abierto.</p><p id="185df87d-8b29-4785-a411-939aad83f11b" class="">
+</p></div></p><p id="eec9e669-3a22-4e28-93a4-d20b66a076f0" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="9a380429-8e34-4c91-b62d-0bfd2710d3de" class="">Retorna <code>1</code> si se libera el espacio exitosamente, <code>0</code> en otro caso.</p><p id="df0fa837-3c7b-4792-9a61-f4db4e1cb227" class="">
+</p></div></p><p id="4acf1ba3-b293-4329-ba7c-afe199a38281" class=""><strong>ERROR HANDLING</strong><div class="indented"><p id="47965852-795e-4450-afe4-5e2d681f4f31" class=""><code>os_close</code> no tiene manejo de errores.</p><p id="73bb5e82-62c9-49f3-ad5d-de10b5c56683" class="">
+</p></div></p><p id="22ef4741-59af-46a5-b156-ac7769ef25d5" class=""><strong>EXAMPLE</strong></p><pre id="c71017b7-9721-40ce-8cf8-7c305c8d3fee" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+	os_mount(&quot;data/simdiskfilled.bin&quot;);
+
+	// Se abre un archivo
+	osFile *file = os_open(&quot;/memes/generic (123).png&quot;, &#x27;w&#x27;);
+
+	// Se cierra
+	os_close(file);
+}</code></pre><p id="cd5f7fa0-de15-4ba5-9ee6-6ca2919b53d3" class="">
+</p><h2 id="bb3500ba-dc6b-46ec-8b1d-5996b91cbb0c" class=""><code>os_mkdir(char* path)</code></h2><hr id="17fe344a-f0d4-4218-8da9-19f16f9ee261"/><p id="6c71e4ec-f6ce-49c1-ab1e-8bcd60738d2b" class=""><strong>SYNOPSIS</strong></p><pre id="be0d10b3-adf8-4f94-bfbc-e326b6028eb9" class="code"><code>#include &lt;string.h&gt;
+#include &quot;./../utils/utils.h&quot;
+
+int os_mkdir(char* path);</code></pre><p id="d499bd79-8c7e-4ebd-9fc9-ff35ec3170dd" class="">
+</p><p id="32b921e6-dd22-4f11-a2e9-9454cc512d39" class=""><strong>DESCRIPTION</strong><div class="indented"><p id="9955d2fb-d860-4236-8a83-f6ab530b6ab9" class="">La función <code>os_mkdir</code> se encarga de crear un nuevo directorio en el <em>path</em> entregado. Retorna <code>1</code> si es que la operación fue exitosa, y <code>0</code> en caso contrario.</p></div></p><p id="83585dd7-aea0-46f4-8b94-50efbadb1000" class="">
+</p><p id="96631e81-04a6-400c-9367-721495a2617c" class=""><strong>PARAMETERS</strong><div class="indented"><ul id="8a531064-78b5-41ef-8616-05660a790969" class="bulleted-list"><li><code>char* path</code> : ruta en el que se debe crear el directorio.</li></ul><p id="62dee81c-5477-41a6-83a5-2ed02ada330c" class="">
+</p></div></p><p id="87069d5a-bb70-43a5-9918-52693a4644e5" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="92759e8f-8951-4843-817c-9cee6a58ae80" class="">La función <code>os_mkdir</code> retorna 1 si es que el directorio se creó correcrtamente y 0 si es que no.</p></div></p><p id="5be3ca64-49a2-4a28-9a29-a08c75f276e7" class="">
+</p><p id="34f980e8-dca4-4554-bb20-f27ce6c78813" class=""><strong>ERROR HANDLING</strong><div class="indented"><p id="5a5c0f46-cb26-4e85-bb94-0d13857622e2" class="">Si no se puede abrir el disco montado (tanto en formato <code>&#x27;r&#x27;</code> como <code>&#x27;w&#x27;</code> ), se imprime el error en pantalla y se retorna <code>0</code>.</p><p id="716bdd38-9a2c-4334-a8f2-f8d79efd5491" class="">Si el directorio ya existe, se imprime el error en pantalla y se retorna <code>0</code>.</p><p id="f8232dc1-cdb4-4168-88cf-2d7f7cd6d612" class="">Si el nombre del directorio a crear contiene un punto, entonces es interpretado como un archivo, por lo que se imprime dicho error y se retorna <code>0</code></p><p id="5fac076e-0c73-4b62-bcc6-b20702fb2653" class="">Si es que el bloque de directorio padre no posee entradas disponibles, se imprime el error en pantalla y se retorna <code>0</code>.</p><p id="e487537e-5778-4b82-8502-197b1b8d309c" class="">Si el disco no posee ningún bloque disponible, se imprime el error en pantalla y se retorna <code>0</code>.</p><p id="988b1bdd-0190-4a96-9385-8c1ae86e4cbd" class="">Si el <code>path</code> tiene un formato incorrecto, se imprime el error en pantalla y se retorna <code>0</code> .</p></div></p><p id="55f98b60-d94a-41f3-85cc-6d1ff037e54a" class="">
+</p><p id="a95a7bdb-fda6-4953-ae00-b98e4fc4cfa0" class=""><strong>EXAMPLE</strong></p><pre id="53ac96c3-3a59-4ceb-97c0-e90fd487eb60" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+	os_mount(&quot;data/simdiskfilled.bin&quot;);
+
+	// Se crea directorio
+	int mkdir = os_mkdir(&quot;/test3&quot;);
+	
+	if (mkdir)
+	{
+		printf(&quot;Directorio creado exitosamente\n&quot;);
+  }
+	else
+	{
+		printf(&quot;Error al crear directorio (revisar STDERR)\n&quot;);
+	}
+	return 0;
+}</code></pre><p id="c0a16bd6-8846-45bf-9abe-ae01fa0de057" class="">
+</p><h2 id="2998e597-b8e2-4488-b5f0-22e1096a03e9" class=""><code>os_hardlink(char* orig, char* dest)</code></h2><hr id="c1a12725-7a1f-4c2a-a416-f2117b7f360d"/><p id="1049eccd-4c0a-43bf-b5ae-186a662f01d6" class=""><strong>SYNOPSIS</strong></p><pre id="597d4b8f-f89b-4438-a0f5-c90fd6151266" class="code"><code>#include &quot;os_API.h&quot;
+
+int os_hardlink(char* orig, char* dest);</code></pre><p id="d2508c73-f6be-4c74-9381-377fdd4be221" class="">
+</p><p id="bf3d39b6-f735-412d-88e9-0b27453e3cbd" class=""><strong>DESCRIPTION</strong></p><p id="84b21825-0ee3-4fb8-a54e-8c4d081c8281" class=""><code>os_hardlink</code> permite crear un archivo representado por el path dest que contiene el mismo contenido que el archivo representado por el path orig. Al momento de ejecutar esta función, se aumenta en una unidad la cantidad de hardlinks del archivo original. </p><p id="870ffe55-3482-4d2a-a218-b6ddfb04fddb" class="">
+</p><p id="4cfd96f7-589b-4960-8ab1-584cd443fcef" class=""><strong>PARAMETERS</strong><div class="indented"><p id="55fe42c1-1a53-4035-8277-cab7b595fe60" class=""><code>char* orig</code> : path del archivo que será copiado.</p><p id="869a2055-2aca-466a-a360-150a5a52ba79" class=""><code>char* dest</code> : path del archivo que copiará el contenido del path orig.</p><p id="a754a3d6-e8da-4455-a4d4-a4543cb9543d" class="">
+</p></div></p><p id="a62c7a6a-9309-420d-9454-5703c372b429" class=""><strong>RETURN VALUE</strong><div class="indented"><p id="e548d7b1-aef6-4f7f-bd7c-4fbd07d9fd29" class="">Retorna <code>1</code> si el archivo se creó con éxito, <code>0</code> en otro caso.</p><p id="44bf2e29-3e85-4695-8f43-be5b622f68cd" class="">
+</p></div></p><p id="e40c156f-b2ad-4c44-a729-60c0d279369a" class=""><strong>ERROR HANDLING</strong></p><ul id="a851aab8-53e7-48b5-94b0-2757a19b3ecf" class="bulleted-list"><li>Si hay un error al leer el archivo del path orig, retornará 0, con el mensaje &quot;[ERROR] os_hardlink: could not open original_file path&quot;</li></ul><ul id="bdb44b51-d1f7-4eab-98c2-8d068bbb42f4" class="bulleted-list"><li>Si hay un error al crear el archivo del path dest, retornará 0, con el mensaje &quot;[ERROR] os_hardlink: could not open original_file path&quot;</li></ul><ul id="a2d10361-4076-45aa-9451-044afab2ac73" class="bulleted-list"><li>Si hay un error al leer el disco, retornará 0, con el mensaje &quot;ERROR: os_hardlink. Error while reading disk.&quot;</li></ul><p id="eac8b93f-79b9-49d1-b839-08b7263925c8" class="">
+</p><p id="a96c3b2e-e482-41f4-825a-68c345ec0bc0" class=""><strong>EXAMPLE</strong></p><pre id="ee15c88c-a3f7-44f4-8dd5-5121110756ef" class="code"><code>#include &quot;os_API.h&quot;
+
+int main(int argc, char *argv[])
+{
+	// Se monta el disco
+  os_mount(&quot;data/simdiskfilled.bin&quot;);
+
+	// Se escribe el hardlink
+  os_hardlink(&quot;IMPORTANT.txt&quot;, &quot;chao4.txt&quot;);
+  return 0;
+}</code></pre><p id="7ac01917-8518-4eb3-b4fe-697b66eb5be8" class="">
+</p><p id="64c167d6-0a95-4879-bdf8-ee1b917aa51b" class="">
+</p></div></article></body></html>
