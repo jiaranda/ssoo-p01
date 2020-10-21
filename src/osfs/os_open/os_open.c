@@ -138,7 +138,6 @@ osFile *os_open(char *path, char mode)
 
     // find empty entry address
     uint32_t dir_block_number = dir_exists(path);
-    printf("dir block number: %d\n", dir_block_number);
     int entry_number = get_empty_entry(dir_block_number);
     if (entry_number == -1)
     {
